@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/createbackground1"
+    tools:context="com.tal.pseudo_share.CreatePseudoActivity">
+
+    <include
+        android:id="@+id/include2"
+        layout="@layout/ring_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="@+id/nextButton"
+        app:layout_constraintStart_toStartOf="@+id/nextButton"
+        app:layout_constraintTop_toBottomOf="@+id/nextButton" />
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/title_toolbar" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/pseudoName"
+        android:layout_width="164dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="76dp"
+        android:hint="Pseudo Code Name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/include"
+        app:met_baseColor="#ffffff"
+        app:met_errorColor="#dd0700"
+        app:met_floatingLabel="normal"
+        app:met_floatingLabelText="Pseudo Code Name"
+        app:met_primaryColor="#ffffff"
+        app:met_singleLineEllipsis="true" />
+
+
+
+    <com.tal.pseudo_share.view.ListPickerEditText
+        android:id="@+id/difficultyPicker"
+        android:layout_width="105dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:hint="Difficulty"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pseudoName" />
+
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/pseudoImage"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/gallery_icon_22"
+        app:layout_constraintStart_toEndOf="@+id/pseudoName"
+        app:layout_constraintTop_toTopOf="@+id/pseudoName"
+        app:riv_border_color="#ffffff"
+        app:riv_border_width="2dip"
+        app:riv_corner_radius="30dip"
+        app:riv_mutate_background="true"
+        app:riv_oval="false"
+        app:riv_tile_mode="clamp" />
+
+    <Button
+        android:id="@+id/nextButton"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/login_button"
+        android:text="Start Coding"
+        android:textSize="17dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/difficultyPicker" />
+
+
+</android.support.constraint.ConstraintLayout>

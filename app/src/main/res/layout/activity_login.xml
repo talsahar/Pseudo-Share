@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.tal.pseudo_share.controller.LoginActivity"
+    >
+
+    <!--background-->
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/background" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp">
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
+            android:layout_gravity="top"
+            android:src="@drawable/logo"
+            android:id="@+id/logo"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/login_handler_background"
+            android:orientation="vertical"
+            android:paddingBottom="20dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="20dp">
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/userField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:drawableLeft="@drawable/usericon_242dp"
+                android:drawablePadding="12dp"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                app:met_baseColor="#ffffff"
+                app:met_primaryColor="#ffffff"
+                app:met_errorColor="#dd0000"
+                app:met_singleLineEllipsis="true"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:imeOptions="actionDone"
+                />
+
+
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/passField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:drawableLeft="@drawable/passicon_242dp"
+                app:met_baseColor="#ffffff"
+                app:met_primaryColor="#ffffff"
+                app:met_errorColor="#dd0000"
+                app:met_singleLineEllipsis="true"
+                android:drawablePadding="12dp"
+                android:hint="........."
+                android:inputType="textPassword"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:imeOptions="actionDone"/>
+
+
+            <Button
+                android:id="@+id/loginButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/login_button"
+                android:clickable="true"
+                android:text="Log In"
+                android:textAllCaps="false"
+                android:textColor="#ffffff" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="New member? Enter a nickname!"
+                android:textColor="#ffffff"
+                android:fontFamily="sans-serif"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:textSize="15dp"
+                android:textStyle="bold"/>
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/nickname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:drawableLeft="@drawable/nickname"
+                android:drawablePadding="12dp"
+                app:met_baseColor="#ffffff"
+                app:met_primaryColor="#ffffff"
+                app:met_errorColor="#dd0000"
+                app:met_singleLineEllipsis="true"
+                android:hint="Nickname"
+                android:inputType="textEmailAddress"
+                android:textColorHint="#ffffff"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:imeOptions="actionDone"/>
+
+
+            <Button
+                android:id="@+id/signupButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/signup_button"
+                android:clickable="true"
+                android:text="Sign Up"
+                android:textAllCaps="false"
+                android:textColor="#ffffff" />
+
+        </LinearLayout>
+    </LinearLayout>
+    <include layout="@layout/ring_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"/>
+</FrameLayout>

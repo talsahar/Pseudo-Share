@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">PseudoShare</string>
+    <string name="tab_text_1">My Pseudos</string>
+    <string name="tab_text_2">Online</string>
+    <string name="tab_text_3">Others</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+</resources>
