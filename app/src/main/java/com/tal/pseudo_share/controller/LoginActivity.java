@@ -1,9 +1,7 @@
 package com.tal.pseudo_share.controller;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,15 +9,13 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.tal.pseudo_share.MyMainActivity;
 import com.tal.pseudo_share.view.ProgressBarHandler;
 import com.tal.pseudo_share.R;
-import com.tal.pseudo_share.model.MyModel;
 
 import io.netopen.hotbitmapgg.library.view.RingProgressBar;
 
 
-public class LoginActivity extends MyMainActivity {
+public class LoginActivity extends AbstractActivity {
     EditText userField;
     EditText passField;
     EditText nickField;
