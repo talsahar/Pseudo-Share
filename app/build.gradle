@@ -31,6 +31,7 @@ dependencies {
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
     compile 'com.makeramen:roundedimageview:2.3.0'
     compile 'com.github.dmytrodanylyk:android-morphing-button:98a4986e56' // commit hash
+    compile 'com.ms-square:expandableTextView:0.1.4'
 
     //firebase
     //noinspection GradleCompatible
