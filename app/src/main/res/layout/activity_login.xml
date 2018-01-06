@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.tal.pseudo_share.controller.LoginActivity"
+    tools:context="com.tal.pseudo_share.ui.LoginActivity"
     >
 
     <!--background-->
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/background" />
+        android:src="@drawable/login_background" />
 
     <LinearLayout
         android:orientation="vertical"
@@ -45,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:drawableLeft="@drawable/usericon_242dp"
+                android:drawableLeft="@drawable/usericon"
                 android:drawablePadding="12dp"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
@@ -65,7 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:drawableLeft="@drawable/passicon_242dp"
+                android:drawableLeft="@drawable/passicon"
                 app:met_baseColor="#ffffff"
                 app:met_primaryColor="#ffffff"
                 app:met_errorColor="#dd0000"
@@ -104,7 +104,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:drawableLeft="@drawable/nickname"
+                android:drawableLeft="@drawable/nickicon"
                 android:drawablePadding="12dp"
                 app:met_baseColor="#ffffff"
                 app:met_primaryColor="#ffffff"

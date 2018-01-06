@@ -7,53 +7,69 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.tal.pseudo_share.controller.LoginActivity;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.storage.FirebaseStorage;
+import com.tal.pseudo_share.ui.LoginActivity;
 
 /**
- * Created by User on 15/12/2017.
+ * Created by User on 05/01/2018.
  */
 
-public class AuthenticationModel implements AuthenticationAPI{
-   FirebaseAuth auth;
+public class AuthenticationModel {
 
-    public AuthenticationModel(FirebaseAuth auth) {
-        this.auth = auth;
+AuthenticationDelegate delegate;
+
+    public AuthenticationModel(AuthenticationDelegate delegate) {
+        this.delegate=delegate;
     }
 
-    @Override
-    public void login(String email, String password, final LoginActivity.OnSuccess onLoginSuccess, final LoginActivity.OnFail onLoginFailed) {
+    public void login(String email, String password) {
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful())
+                            delegate.onLoginSuccess(task.getResult().getUser());
 
-        auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(onCompleteCreate(onLoginSuccess,onLoginFailed));
+                        else
+                            delegate.onLoginFailure(task.getException());
+                    }
+                });
     }
 
-    @Override
-    public void signup(final String email, String password, String nickname, final LoginActivity.OnSuccess onLoginSuccess, final LoginActivity.OnFail onLoginFailed) {
-        auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(onCompleteCreate(onLoginSuccess,onLoginFailed));
-    }
-
-    @Override
-    public FirebaseUser getCurrentUser() {
-        return auth.getCurrentUser();
-    }
-
-    @Override
-    public void logout() {
-        auth.signOut();
-    }
-
-
-    private OnCompleteListener<AuthResult> onCompleteCreate(final LoginActivity.OnSuccess onSuccess, final LoginActivity.OnFail onFail){
-        return new OnCompleteListener<AuthResult>() {
+    public void signup(final String email, String password, final String nickname) {
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful())
-                    onSuccess.accept(auth.getCurrentUser());
-
-                 else
-                    onFail.accept(task.getException());
-
+                if (task.isSuccessful()) {
+                    updateNickname(nickname);
+                    delegate.onSignupSuccess(FirebaseAuth.getInstance().getCurrentUser());
+                }
+                else
+                    delegate.onSignupFailure(task.getException());
             }
-        };
+        });
     }
+
+    public static FirebaseUser getCurrentUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    public static void logout() {
+        FirebaseAuth.getInstance().signOut();
+    }
+
+    public void updateNickname(String nickname){
+        UserProfileChangeRequest update=new UserProfileChangeRequest.Builder().setDisplayName(nickname).build();
+        getCurrentUser().updateProfile(update);
+    }
+
+    public interface AuthenticationDelegate{
+        void onLoginSuccess(FirebaseUser user);
+        void onLoginFailure(Exception exception);
+        void onSignupSuccess(FirebaseUser user);
+        void onSignupFailure(Exception exception);
+
+    }
+
 }

@@ -20,20 +20,16 @@ import java.io.ByteArrayOutputStream;
  * Created by User on 21/12/2017.
  */
 
-public class FirebaseStorageModel implements FirebaseFilesAPI {
-    FirebaseStorage storage;
+public class FirebaseStorageModel {
 
-    public FirebaseStorageModel(FirebaseStorage storage){this.storage=storage;
+    FirebaseFileStorageDelegate delegate;
+    public FirebaseStorageModel(FirebaseFileStorageDelegate delegate){
+        this.delegate=delegate;
     }
 
-
-
-
-    @Override
-    public void uploadFromMemory(ImageView imageView) {
-        StorageReference storageRef = storage.getReference();
-        StorageReference mountainImagesRef = storageRef.child("images/mountains.jpg");
-        boolean b=(imageView.getDrawable()==null);
+    public void uploadFromMemory(ImageView imageView,String name) {
+        FirebaseStorage storage=FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference().child(name);
         // Get the data from an ImageView as bytes
         imageView.setDrawingCacheEnabled(true);
         imageView.buildDrawingCache();
@@ -41,43 +37,41 @@ public class FirebaseStorageModel implements FirebaseFilesAPI {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
-
-        UploadTask uploadTask = mountainImagesRef.putBytes(data);
+        UploadTask uploadTask = storageRef.putBytes(data);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
+                delegate.onUploadFailed(exception);
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                delegate.onUploadComplete(downloadUrl);
             }
         });
     }
 
-@Override
-    public void downloadFile(final ImageView imageView){
-        StorageReference islandRef = storage.getReference().child("images/mountains.jpg");
-
+    public void downloadFile(String path){
+    FirebaseStorage storage=FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference().child(path);
         final long ONE_MEGABYTE = 1024 * 1024;
-        islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 Drawable image = new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                imageView.setImageDrawable(image);
+                delegate.onDownloadComplete(image);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
+                delegate.onDownloadFailed(exception);
             }
         });
     }
 
 
-    @Override
     public void uploadViaStream(ImageView imageView) {
       /*  File file;
         InputStream stream = new FileInputStream(new File("d:/"));
@@ -96,4 +90,14 @@ public class FirebaseStorageModel implements FirebaseFilesAPI {
             }
         });*/
     }
+
+    public interface FirebaseFileStorageDelegate{
+        void onUploadComplete(Uri result);
+        void onUploadFailed(Exception exception);
+        void onDownloadComplete(Drawable result);
+        void onDownloadFailed(Exception exception);
+
+
+    }
+
 }

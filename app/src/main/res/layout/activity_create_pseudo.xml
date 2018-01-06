@@ -5,8 +5,8 @@ android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/createbackground1"
-    tools:context="com.tal.pseudo_share.controller.CreatePseudoActivity">
+    android:background="@drawable/createbackground"
+    tools:context="com.tal.pseudo_share.ui.CreatePseudoActivity">
     <include
         android:id="@+id/include"
         layout="@layout/title_toolbar"
