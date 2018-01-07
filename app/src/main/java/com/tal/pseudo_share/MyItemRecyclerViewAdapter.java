@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tal.pseudo_share.ui.MyPseudoFragment.OnListFragmentInteractionListener;
-import com.tal.pseudo_share.db.entity.Pseudo;
+import com.tal.pseudo_share.model.entities.Pseudo;
 
 import java.util.List;
 

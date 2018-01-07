@@ -6,22 +6,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.tal.pseudo_share.model.authentication.AuthenticationModel;
-import com.tal.pseudo_share.view.ProgressBarHandler;
 import com.tal.pseudo_share.R;
 
-import io.netopen.hotbitmapgg.library.view.RingProgressBar;
 
 
 public class LoginActivity extends AppCompatActivity implements AuthenticationModel.AuthenticationDelegate {
     EditText userField;
     EditText passField;
     EditText nickField;
-    ProgressBarHandler progressHandler;
+    ProgressBar progressBar;
 AuthenticationModel auth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +31,7 @@ AuthenticationModel auth;
         userField = findViewById(R.id.userField);
         passField = findViewById(R.id.passField);
         nickField = findViewById(R.id.nickname);
-        RingProgressBar ringProgressBar = findViewById(R.id.progress_bar);
-        progressHandler = new ProgressBarHandler(this, ringProgressBar);
+        progressBar = findViewById(R.id.progressBar);
         Button signupButton = findViewById(R.id.signupButton);
         Button loginButton = findViewById(R.id.loginButton);
 
@@ -43,7 +40,7 @@ AuthenticationModel auth;
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressHandler.show();
+                progressBar.setVisibility(View.VISIBLE);
                 String user, pass, nick;
                 if ((user = fieldAsString(userField)).isEmpty())
                     toast("Error: email field is empty.");
@@ -52,20 +49,28 @@ AuthenticationModel auth;
                 else if ((nick = fieldAsString(nickField)).isEmpty())
                     toast("Error: nickname field is empty.");
                 else
-                   auth.signup(fieldAsString(userField), fieldAsString(passField), fieldAsString(nickField));
+                {
+                    auth.signup(fieldAsString(userField), fieldAsString(passField), fieldAsString(nickField));
+                    return;
+                }
+                progressBar.setVisibility(View.INVISIBLE);
             }
         });
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressHandler.show();
+                progressBar.setVisibility(View.VISIBLE);
                 String user, pass, nick;
                 if ((user = fieldAsString(userField)).isEmpty())
                     toast("Error: email field is empty.");
                 else if ((pass = fieldAsString(passField)).isEmpty())
                     toast("Error: password field is empty.");
                 else
+                {
                     auth.login(fieldAsString(userField),fieldAsString(passField));
+                return;
+                }
+                progressBar.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -78,22 +83,25 @@ AuthenticationModel auth;
     public void onLoginSuccess(FirebaseUser user) {
         toast("you have been successfully signed in.");
         loadMainActivity();
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onLoginFailure(Exception exception) {
         toast(exception.getMessage());
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onSignupSuccess(FirebaseUser user) {
         toast("you have been successfully signed up.");
         loadMainActivity();
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onSignupFailure(Exception exception) {
-        toast(exception.getMessage());
+        toast(exception.getMessage());progressBar.setVisibility(View.INVISIBLE);
     }
 
     private void loadMainActivity(){

@@ -1,28 +1,58 @@
 package com.tal.pseudo_share.ui;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.tal.pseudo_share.R;
-import com.tal.pseudo_share.view.ProgressBarHandler;
+import com.tal.pseudo_share.model.entities.Pseudo;
+import com.tal.pseudo_share.viewmodel.CreatePseudoViewModel;
 
-import io.netopen.hotbitmapgg.library.view.RingProgressBar;
 
 public class CreatePseudoActivity extends AppCompatActivity {
-    ProgressBarHandler progressBarHandler;
-
+    CreatePseudoViewModel viewModel;
+    ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_pseudo);
+        progressBar=findViewById(R.id.progressBar);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Create Pseudo");
         setSupportActionBar(toolbar);
+        viewModel= ViewModelProviders.of(this).get(CreatePseudoViewModel.class);
+        viewModel.getLiveData().observe(this, new Observer<Pseudo>() {
+            @Override
+            public void onChanged(@Nullable Pseudo pseudo) {
+                progressBar.setVisibility(View.VISIBLE);
+                viewModel.build(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.INVISIBLE);
+
+                    }
+                });
+            }
+        });
+
+        viewModel.getProgressBarStatus().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean aBoolean) {
+                if(aBoolean)
+                progressBar.setVisibility(View.VISIBLE);
+                else
+                    progressBar.setVisibility(View.INVISIBLE);
+            }
+        });
 
         Fragment newFragment = new CreateFragmentOne();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -30,8 +60,6 @@ public class CreatePseudoActivity extends AppCompatActivity {
         transaction.addToBackStack(null);
         transaction.commit();
 
-        RingProgressBar ringProgressBar = findViewById(R.id.progress_bar);
-        progressBarHandler = new ProgressBarHandler(this, ringProgressBar);
 
     }
 
@@ -61,8 +89,5 @@ onBackPressed();
         else super.onBackPressed();
     }
 
-    public void showProgressBar() {
-        progressBarHandler.show();
-    }
 
 }

@@ -1,10 +1,9 @@
 package com.tal.pseudo_share.viewmodel;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.tal.pseudo_share.db.entity.Pseudo;
+import com.tal.pseudo_share.model.entities.Pseudo;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -130,9 +130,12 @@
 
         </LinearLayout>
     </LinearLayout>
-    <include layout="@layout/ring_progress_bar"
+
+   <ProgressBar
+       android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+       android:visibility="invisible"
         android:layout_gravity="center|bottom"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="15dp"/>

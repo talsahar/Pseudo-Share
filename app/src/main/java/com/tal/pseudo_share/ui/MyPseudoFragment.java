@@ -14,10 +14,9 @@ import android.view.ViewGroup;
 
 import com.tal.pseudo_share.MyItemRecyclerViewAdapter;
 import com.tal.pseudo_share.R;
-import com.tal.pseudo_share.db.entity.Pseudo;
+import com.tal.pseudo_share.model.entities.Pseudo;
 import com.tal.pseudo_share.viewmodel.MyPseudoViewModel;
 
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -40,7 +39,7 @@ public class MyPseudoFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         myPseudoViewModel=ViewModelProviders.of(this).get(MyPseudoViewModel.class);
-        myPseudoViewModel.setData(getData());
+        //myPseudoViewModel.setData(getData());
         myPseudoViewModel.getData().observe(this, new Observer<List<Pseudo>>() {
             @Override
             public void onChanged(@Nullable List<Pseudo> pseudos) {
@@ -50,7 +49,7 @@ public class MyPseudoFragment extends Fragment {
 
     }
 
-    public void addData(long i){
+  /*  public void addData(long i){
         List<Pseudo> list=new LinkedList<>();
         list.add(new Pseudo("Tal"+i,"tal","sadasd",null,null,null,43));
         list.add(new Pseudo("Tal2"+i,"tal2","sadasd",null,null,null,43));
@@ -77,7 +76,7 @@ public class MyPseudoFragment extends Fragment {
         myPseudoViewModel.setData(list);
 
     }
-
+*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

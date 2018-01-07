@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tal.pseudo_share.db;
+package com.tal.pseudo_share.model.utils;
 
 import android.arch.persistence.room.TypeConverter;
 
