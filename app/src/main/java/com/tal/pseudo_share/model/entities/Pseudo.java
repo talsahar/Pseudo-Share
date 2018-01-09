@@ -5,6 +5,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
+import com.google.firebase.database.ServerValue;
 import com.tal.pseudo_share.model.utils.DateConverter;
 
 import java.util.Date;

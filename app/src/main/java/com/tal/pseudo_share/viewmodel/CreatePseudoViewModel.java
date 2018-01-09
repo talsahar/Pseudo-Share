@@ -51,8 +51,7 @@ public class CreatePseudoViewModel extends ViewModel {
                 @Override
                 public void onUploadComplete(Uri result) {
                     pseudo.setImageUrl(result.toString());
-                    PseudoRepository.instance.insertPseudo(pseudo);
-                    onComplete.run();
+                    PseudoRepository.instance.storePseudo(pseudo,onComplete);
                 }
 
                 @Override

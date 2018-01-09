@@ -38,7 +38,7 @@ public class CreatePseudoActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         progressBar.setVisibility(View.INVISIBLE);
-
+                        finish();
                     }
                 });
             }

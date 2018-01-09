@@ -30,9 +30,7 @@ CreatePseudoViewModel viewModel;
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel= ViewModelProviders.of(getActivity()).get(CreatePseudoViewModel.class);
-
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
