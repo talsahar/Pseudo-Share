@@ -11,18 +11,12 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.model.entities.Pseudo;
-import com.tal.pseudo_share.model.db.serverDB.PseudoFirebase;
-import com.tal.pseudo_share.model.authentication.AuthenticationModel;
-
-import java.util.Date;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MyPseudoFragment.OnListFragmentInteractionListener {
 

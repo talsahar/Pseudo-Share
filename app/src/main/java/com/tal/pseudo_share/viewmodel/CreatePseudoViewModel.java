@@ -3,14 +3,9 @@ package com.tal.pseudo_share.viewmodel;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.util.Log;
 
-import com.tal.pseudo_share.model.authentication.AuthenticationModel;
 import com.tal.pseudo_share.model.db.PseudoRepository;
-import com.tal.pseudo_share.model.db.serverDB.PseudoFirebase;
 import com.tal.pseudo_share.model.entities.Pseudo;
-import com.tal.pseudo_share.model.storage.FirebaseStorageModel;
 
 import java.util.UUID;
 
@@ -47,28 +42,7 @@ public class CreatePseudoViewModel extends ViewModel {
     }
     public void build(final Runnable onComplete) {
 
-            new FirebaseStorageModel(new FirebaseStorageModel.FirebaseFileStorageDelegate() {
-                @Override
-                public void onUploadComplete(Uri result) {
-                    pseudo.setImageUrl(result.toString());
-                    PseudoRepository.instance.storePseudo(pseudo,onComplete);
-                }
-
-                @Override
-                public void onUploadFailed(Exception exception) {
-                    Log.d("TAG","failed uploading image");
-                }
-
-                @Override
-                public void onDownloadComplete(Bitmap result) {
-
-                }
-
-                @Override
-                public void onDownloadFailed(Exception exception) {
-
-                }
-            }).storeImage(imageBitmap,pseudo.id+".jpg");
+        PseudoRepository.instance.storePseudo(pseudo,imageBitmap,onComplete);
 
 
         }

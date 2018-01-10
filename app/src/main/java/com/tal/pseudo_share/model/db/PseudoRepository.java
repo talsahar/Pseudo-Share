@@ -3,15 +3,17 @@ package com.tal.pseudo_share.model.db;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.ServerValue;
 import com.tal.pseudo_share.model.db.serverDB.PseudoFirebase;
 import com.tal.pseudo_share.model.entities.Pseudo;
+import com.tal.pseudo_share.model.storage.FirebaseStorageModel;
 import com.tal.pseudo_share.model.utils.MyApplication;
 
 import java.util.List;
@@ -28,17 +30,43 @@ public class PseudoRepository {
 
     }
 
-    public void storePseudo(final Pseudo pseudo, final Runnable onComplete){
-        SharedPreferences.Editor editor = MyApplication.getMyContext().getSharedPreferences("TAG", MODE_PRIVATE).edit();
-        editor.putLong("lastUpdateDate", pseudo.lastUpdated);
-        editor.commit();
-        PseudoFirebase.addPseudo(pseudo, new OnCompleteListener<Void>() {
+    public void storePseudo(final Pseudo pseudo, Bitmap imageBitmap, final Runnable onComplete){
+
+        new FirebaseStorageModel(new FirebaseStorageModel.FirebaseFileStorageDelegate() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                AppLocalStore.db.pseudoDao().insertAll(pseudo);
-                onComplete.run();
+            public void onUploadComplete(Uri result) {
+                pseudo.setImageUrl(result.toString());
+
+                SharedPreferences.Editor editor = MyApplication.getMyContext().getSharedPreferences("TAG", MODE_PRIVATE).edit();
+                editor.putLong("lastUpdateDate", pseudo.lastUpdated);
+                editor.commit();
+                PseudoFirebase.addPseudo(pseudo, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        AppLocalStore.db.pseudoDao().insertAll(pseudo);
+                        onComplete.run();
+                    }
+                });
             }
-        });
+
+            @Override
+            public void onUploadFailed(Exception exception) {
+                Log.d("TAG","failed uploading image");
+            }
+
+            @Override
+            public void onDownloadComplete(Bitmap result) {
+            }
+
+            @Override
+            public void onDownloadFailed(Exception exception) {
+
+            }
+        }).storeImage(imageBitmap,pseudo.id+".jpg");
+
+
+
+
     }
 
 
