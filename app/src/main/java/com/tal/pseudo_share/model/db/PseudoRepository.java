@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.tal.pseudo_share.model.authentication.AuthenticationRepository;
 import com.tal.pseudo_share.model.db.serverDB.PseudoFirebase;
 import com.tal.pseudo_share.data.Pseudo;
@@ -131,7 +132,7 @@ for(Pseudo p:pseudoList)
             pseudoListLiveData.setValue(pseudos);
             List<Pseudo> myPseudosTMP=new LinkedList<>();
             for(Pseudo p:pseudos){
-                String s=AuthenticationRepository.getUserMutableLiveData().getValue().getDisplayName();
+                String s= FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
                 if(p.getAuthor().equals(s))
                     myPseudosTMP.add(p);
             }
