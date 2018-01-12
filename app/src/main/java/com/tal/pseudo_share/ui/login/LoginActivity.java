@@ -1,7 +1,6 @@
-package com.tal.pseudo_share.ui;
+package com.tal.pseudo_share.ui.login;
 
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.tal.pseudo_share.R;
+import com.tal.pseudo_share.ui.main.MainActivity;
 import com.tal.pseudo_share.viewmodel.AuthenticationViewModel;
 
 
@@ -23,14 +23,14 @@ public class LoginActivity extends AppCompatActivity {
     EditText passField;
     EditText nickField;
     ProgressBar progressBar;
-
     AuthenticationViewModel viewModel;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel= ViewModelProviders.of(this).get(AuthenticationViewModel.class);
+        setContentView(R.layout.activity_login);
 
+        viewModel= ViewModelProviders.of(this).get(AuthenticationViewModel.class);
         viewModel.getExceptionLiveData().observe(this, new Observer<Exception>() {
             @Override
             public void onChanged(@Nullable Exception e) {
@@ -42,15 +42,13 @@ public class LoginActivity extends AppCompatActivity {
         viewModel.getUserLiveData().observe(this, new Observer<FirebaseUser>() {
             @Override
             public void onChanged(@Nullable FirebaseUser firebaseUser) {
-                toast("Hello "+firebaseUser.getDisplayName()+".");
                 progressBar.setVisibility(View.INVISIBLE);
-                if(firebaseUser!=null)
-                loadMainActivity();
-
+                if(firebaseUser!=null){
+                    toast("Welcome to Pseudo-Share");
+                    loadMainActivity();
+                }
             }
         });
-
-        setContentView(R.layout.activity_login);
         userField = findViewById(R.id.userField);
         passField = findViewById(R.id.passField);
         nickField = findViewById(R.id.nickname);
@@ -71,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                     toast("Error: nickname field is empty.");
                 else
                 {
-                    viewModel.signup(fieldAsString(userField), fieldAsString(passField), fieldAsString(nickField));
+                    viewModel.signup(user,pass, nick);
                     return;
                 }
                 progressBar.setVisibility(View.INVISIBLE);
@@ -81,14 +79,14 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
-                String user, pass, nick;
+                String user, pass;
                 if ((user = fieldAsString(userField)).isEmpty())
                     toast("Error: email field is empty.");
                 else if ((pass = fieldAsString(passField)).isEmpty())
                     toast("Error: password field is empty.");
                 else
                 {
-                    viewModel.signin(fieldAsString(userField),fieldAsString(passField));
+                    viewModel.signin(user,pass);
                 return;
                 }
                 progressBar.setVisibility(View.INVISIBLE);
@@ -103,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
     private void loadMainActivity(){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-        finish();
+
     }
 
     private void toast(String msg){

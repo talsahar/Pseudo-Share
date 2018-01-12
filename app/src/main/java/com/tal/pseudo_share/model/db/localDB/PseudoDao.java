@@ -6,7 +6,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
-import com.tal.pseudo_share.model.entities.Pseudo;
+import com.tal.pseudo_share.data.Pseudo;
 
 import java.util.List;
 
@@ -29,5 +29,7 @@ public interface PseudoDao{
 
     @Delete
     void delete(Pseudo pseudo);
+
+
 
 }

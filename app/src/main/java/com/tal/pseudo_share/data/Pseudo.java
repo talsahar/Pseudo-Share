@@ -1,4 +1,4 @@
-package com.tal.pseudo_share.model.entities;
+package com.tal.pseudo_share.data;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
@@ -6,6 +6,8 @@ import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
 import com.google.firebase.database.ServerValue;
+import com.tal.pseudo_share.data.Difficulty;
+import com.tal.pseudo_share.data.PseudoType;
 import com.tal.pseudo_share.model.utils.DateConverter;
 
 import java.util.Date;
@@ -42,7 +44,7 @@ public class Pseudo {
         result.put("description", description);
         result.put("imageUrl", imageUrl);
         result.put("content", content);
-        result.put("lastUpdate", lastUpdated);
+        result.put("lastUpdated", ServerValue.TIMESTAMP);
         return result;
     }
 

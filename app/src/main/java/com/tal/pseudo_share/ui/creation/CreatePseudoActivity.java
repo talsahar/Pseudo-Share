@@ -1,4 +1,4 @@
-package com.tal.pseudo_share.ui;
+package com.tal.pseudo_share.ui.creation;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -14,7 +14,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.tal.pseudo_share.R;
-import com.tal.pseudo_share.model.entities.Pseudo;
+import com.tal.pseudo_share.data.Pseudo;
+import com.tal.pseudo_share.ui.creation.CreateFragmentOne;
 import com.tal.pseudo_share.viewmodel.CreatePseudoViewModel;
 
 
@@ -30,6 +31,7 @@ public class CreatePseudoActivity extends AppCompatActivity {
         toolbar.setTitle("Create Pseudo");
         setSupportActionBar(toolbar);
         viewModel= ViewModelProviders.of(this).get(CreatePseudoViewModel.class);
+        //called when user triggers the create button
         viewModel.getLiveData().observe(this, new Observer<Pseudo>() {
             @Override
             public void onChanged(@Nullable Pseudo pseudo) {
@@ -38,12 +40,14 @@ public class CreatePseudoActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         progressBar.setVisibility(View.INVISIBLE);
+                        viewModel.clear();
                         finish();
                     }
                 });
             }
         });
 
+        //control progress bar via fragments
         viewModel.getProgressBarStatus().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean aBoolean) {
@@ -59,15 +63,12 @@ public class CreatePseudoActivity extends AppCompatActivity {
         transaction.replace(R.id.contentContainer, newFragment);
         transaction.addToBackStack(null);
         transaction.commit();
-
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.create_menu, menu);
-
         return true;
     }
 

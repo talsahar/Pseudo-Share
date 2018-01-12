@@ -6,7 +6,7 @@ android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/createbackground"
-    tools:context="com.tal.pseudo_share.ui.CreatePseudoActivity">
+    tools:context="com.tal.pseudo_share.ui.creation.CreatePseudoActivity">
     <include
         android:id="@+id/include"
         layout="@layout/title_toolbar"

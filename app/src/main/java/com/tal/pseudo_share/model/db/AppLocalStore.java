@@ -5,7 +5,7 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 
 import com.tal.pseudo_share.model.db.localDB.PseudoDao;
-import com.tal.pseudo_share.model.entities.Pseudo;
+import com.tal.pseudo_share.data.Pseudo;
 import com.tal.pseudo_share.model.utils.MyApplication;
 
 

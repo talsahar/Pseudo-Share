@@ -20,12 +20,8 @@ import java.io.ByteArrayOutputStream;
 
 public class FirebaseStorageModel {
 
-    FirebaseFileStorageDelegate delegate;
-    public FirebaseStorageModel(FirebaseFileStorageDelegate delegate){
-        this.delegate=delegate;
-    }
 
-    public void storeImage(Bitmap bitmap, String name) {
+    public static void storeImage(Bitmap bitmap, String name, final OnUploadCompleteListener listener) {
         FirebaseStorage storage=FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference().child("images").child(name);
 
@@ -36,19 +32,19 @@ public class FirebaseStorageModel {
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                delegate.onUploadFailed(exception);
+                listener.onUploadFailed(exception);
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                delegate.onUploadComplete(downloadUrl);
+                listener.onUploadComplete(downloadUrl);
             }
         });
     }
 
-    public void loadImage(String path){
+    public static void loadImage(String path,final OnDownloadCompleteListener listener){
     FirebaseStorage storage=FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference().child("images").child(path);
         final long ONE_MEGABYTE = 1024 * 1024;
@@ -56,25 +52,25 @@ public class FirebaseStorageModel {
             @Override
             public void onSuccess(byte[] bytes) {
                 Bitmap image = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                delegate.onDownloadComplete(image);
+                listener.onDownloadComplete(image);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(Exception exception) {
                 Log.d("TAG",exception.getMessage());
-                onFailure(exception);
+                listener.onDownloadFailed(exception);
             }
         });
 
     }
-
-    public interface FirebaseFileStorageDelegate{
+    public interface OnUploadCompleteListener{
         void onUploadComplete(Uri result);
         void onUploadFailed(Exception exception);
+
+    }
+    public interface OnDownloadCompleteListener{
         void onDownloadComplete(Bitmap result);
         void onDownloadFailed(Exception exception);
-
-
     }
 
 }

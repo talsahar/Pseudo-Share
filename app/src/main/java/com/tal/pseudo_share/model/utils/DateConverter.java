@@ -18,6 +18,7 @@ package com.tal.pseudo_share.model.utils;
 
 import android.arch.persistence.room.TypeConverter;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateConverter {
@@ -28,6 +29,12 @@ public class DateConverter {
 
     @TypeConverter
     public static Long toTimestamp(Date date) {
+
         return date == null ? null : date.getTime();
+    }
+
+    public static String onlyDate(Date date){
+        String newstring = new SimpleDateFormat("yyyy-MM-dd").format(date);
+        return newstring;
     }
 }

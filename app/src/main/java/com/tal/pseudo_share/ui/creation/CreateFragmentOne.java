@@ -1,33 +1,25 @@
-package com.tal.pseudo_share.ui;
+package com.tal.pseudo_share.ui.creation;
 
 
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.data.Difficulty;
 import com.tal.pseudo_share.data.PseudoType;
-import com.tal.pseudo_share.model.entities.Pseudo;
-import com.tal.pseudo_share.model.storage.FirebaseStorageModel;
 import com.tal.pseudo_share.view.ListPickerEditText;
 import com.tal.pseudo_share.viewmodel.CreatePseudoViewModel;
 
@@ -86,8 +78,8 @@ public class CreateFragmentOne extends Fragment {
             public void onClick(View v) {
                 if(verifyFields()){
                     viewModel.getUnreadyPseudo().setDescription(description.getText().toString());
-                    viewModel.getUnreadyPseudo().difficulty=difficultyPicker.getText().toString();
-                    viewModel.getUnreadyPseudo().type=typePicker.getText().toString();
+                    viewModel.getUnreadyPseudo().difficulty=(difficultyPicker.getText().toString());
+                    viewModel.getUnreadyPseudo().type=(typePicker.getText().toString());
                     viewModel.getUnreadyPseudo().setName(title.getText().toString());
                     Fragment newFragment = new CreateFragmentTwo();
                     FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -98,19 +90,22 @@ public class CreateFragmentOne extends Fragment {
             }
 
             private boolean verifyFields() {
-                return true;
+                if(title.getText().toString().isEmpty())
+                    Toast.makeText(getActivity(), "Please enter a title.", Toast.LENGTH_SHORT).show();
+                else if(difficultyPicker.getText().toString().isEmpty())
+                    Toast.makeText(getActivity(), "Please enter difficulty.", Toast.LENGTH_SHORT).show();
+                else if(typePicker.getText().toString().isEmpty())
+                    Toast.makeText(getActivity(), "Please enter pseudo type.", Toast.LENGTH_SHORT).show();
+                else if(description.getText().toString().isEmpty())
+                    Toast.makeText(getActivity(), "Please enter description.", Toast.LENGTH_SHORT).show();
+                else return true;
+                return false;
             }
-
         });
         return view;
     }
-
-
-
     static final int REQUEST_IMAGE_CAPTURE = 1;
     final static int RESAULT_SUCCESS = 0;
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE &&
@@ -122,6 +117,4 @@ public class CreateFragmentOne extends Fragment {
             viewModel.setProgressBarStatus(false);
         }
     }
-
-
 }

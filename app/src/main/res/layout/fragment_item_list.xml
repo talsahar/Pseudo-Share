@@ -6,8 +6,7 @@
     android:name="com.tal.pseudo_share.ItemFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="com.tal.pseudo_share.ui.MyPseudoFragment"
-    tools:listitem="@layout/fragment_item" />
+    tools:context="com.tal.pseudo_share.ui.main.AbstractListFragment"
+
+    tools:listitem="@layout/list_item" />

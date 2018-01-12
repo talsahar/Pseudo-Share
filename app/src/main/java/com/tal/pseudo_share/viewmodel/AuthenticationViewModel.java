@@ -15,10 +15,6 @@ import com.tal.pseudo_share.model.authentication.AuthenticationRepository;
     MutableLiveData<FirebaseUser> userLiveData;//update when sign in/out
     MutableLiveData<Exception> exceptionLiveData;//update when exception
 
- public AuthenticationViewModel(){
-        exceptionLiveData=AuthenticationRepository.getExceptionMutableLiveData();
-    }
-
     public void signin(String email, String password) {
     AuthenticationRepository.login(email,password);
     }

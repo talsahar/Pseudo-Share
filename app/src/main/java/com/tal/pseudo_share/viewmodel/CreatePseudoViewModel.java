@@ -4,8 +4,10 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.graphics.Bitmap;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.tal.pseudo_share.model.authentication.AuthenticationRepository;
 import com.tal.pseudo_share.model.db.PseudoRepository;
-import com.tal.pseudo_share.model.entities.Pseudo;
+import com.tal.pseudo_share.data.Pseudo;
 
 import java.util.UUID;
 
@@ -14,37 +16,36 @@ import java.util.UUID;
  */
 //get pseudo obj build your pseudo and call create
 public class CreatePseudoViewModel extends ViewModel {
-    private final MutableLiveData<Pseudo> pseudoWhenReady;
-    Pseudo pseudo;
+    PseudoRepository pseudoRepository;
+    private MutableLiveData<Pseudo> pseudoWhenReady;
+    Pseudo pseudoBuilder;
     Bitmap imageBitmap;
+    private MutableLiveData<Boolean> progressBarStatus;
 
-    private final MutableLiveData<Boolean> progressBarStatus;
-
-    public CreatePseudoViewModel(){
-        pseudo=new Pseudo();
-       pseudo.id=UUID.randomUUID().toString();
-       pseudo.setAuthor(AuthenticationModel.getCurrentUser().getUid());
-        pseudoWhenReady=new MutableLiveData<>();
-        progressBarStatus=new MutableLiveData<>();
-    }
     public MutableLiveData<Pseudo> getLiveData(){
+        if(pseudoWhenReady==null)
+            pseudoWhenReady=new MutableLiveData<>();
         return pseudoWhenReady;
     }
-
     public Pseudo getUnreadyPseudo(){
-        return pseudo;
+        if(pseudoBuilder==null){
+            pseudoBuilder=new Pseudo();
+            pseudoBuilder.id=UUID.randomUUID().toString();
+            pseudoBuilder.setAuthor(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+
+        }
+        return pseudoBuilder;
     }
 
     //called when ready
     public void updateLiveData(){
-        pseudoWhenReady.setValue(pseudo);
+        pseudoWhenReady.setValue(pseudoBuilder);
 
     }
     public void build(final Runnable onComplete) {
-
-        PseudoRepository.instance.storePseudo(pseudo,imageBitmap,onComplete);
-
-
+        if(pseudoRepository==null)
+            pseudoRepository=new PseudoRepository();
+        pseudoRepository.storePseudo(pseudoBuilder,imageBitmap,onComplete);
         }
 
     public void setImageBitmap(Bitmap imageBitmap) {
@@ -55,7 +56,14 @@ public class CreatePseudoViewModel extends ViewModel {
         progressBarStatus.setValue(b);
     }
     public MutableLiveData<Boolean> getProgressBarStatus() {
+        if(progressBarStatus==null)
+            progressBarStatus=new MutableLiveData<>();
         return progressBarStatus;
     }
 
+    public void clear() {
+        pseudoWhenReady=null;
+        pseudoBuilder=null;
+        imageBitmap=null;
+    }
 }

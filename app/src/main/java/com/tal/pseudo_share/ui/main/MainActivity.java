@@ -1,6 +1,9 @@
-package com.tal.pseudo_share.ui;
+package com.tal.pseudo_share.ui.main;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 
@@ -14,19 +17,37 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.tal.pseudo_share.R;
-import com.tal.pseudo_share.model.entities.Pseudo;
+import com.tal.pseudo_share.data.Pseudo;
+import com.tal.pseudo_share.ui.creation.CreatePseudoActivity;
+import com.tal.pseudo_share.viewmodel.MyPseudoViewModel;
 
-public class MainActivity extends AppCompatActivity implements MyPseudoFragment.OnListFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    private MyPseudoViewModel myPseudoViewModel;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        myPseudoViewModel = ViewModelProviders.of(this).get(MyPseudoViewModel.class);
+        progressBar = findViewById(R.id.progressBar);
+        myPseudoViewModel.getProgressBarStatus().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean aBoolean) {
+                if (aBoolean)
+                    progressBar.setVisibility(View.VISIBLE);
+                else
+                    progressBar.setVisibility(View.INVISIBLE);
+            }
+        });
+        myPseudoViewModel.setProgressBarStatus(true);
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -52,10 +73,6 @@ public class MainActivity extends AppCompatActivity implements MyPseudoFragment.
 
     }
 
-    @Override
-    public void onListFragmentInteraction(Pseudo item) {
-
-    }
 
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
@@ -63,20 +80,27 @@ public class MainActivity extends AppCompatActivity implements MyPseudoFragment.
     }
 
 
-
-
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        Fragment[] fragments;
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
+            fragments = new Fragment[3];
         }
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return MyPseudoFragment.newInstance(MainActivity.this);
-            //return PlaceholderFragment.newInstance(position + 1);
+            switch (position) {
+                case 0:
+                    return new MyPseudoFragment();
+                case 1:
+                    return new OnlinePseudoFragment();
+                case 2:
+                    return new MyPseudoFragment();
+                default:
+                    return null; // Problem occurs at this condition!
+            }
         }
 
         @Override
@@ -84,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements MyPseudoFragment.
             return 3;
         }
     }
-
 
 
     @Override
@@ -99,9 +122,6 @@ public class MainActivity extends AppCompatActivity implements MyPseudoFragment.
             case R.id.action_settings:
                 break;
             case R.id.action_logout:
-                Intent intent = new Intent(this, LoginActivity.class);
-                AuthenticationModel.logout();
-                startActivity(intent);
                 finish();
                 break;
         }

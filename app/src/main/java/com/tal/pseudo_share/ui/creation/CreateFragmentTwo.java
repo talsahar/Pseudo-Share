@@ -1,4 +1,4 @@
-package com.tal.pseudo_share.ui;
+package com.tal.pseudo_share.ui.creation;
 
 
 import android.arch.lifecycle.ViewModelProviders;
@@ -10,9 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.tal.pseudo_share.R;
-import com.tal.pseudo_share.model.entities.Pseudo;
 import com.tal.pseudo_share.model.utils.DateConverter;
 import com.tal.pseudo_share.viewmodel.CreatePseudoViewModel;
 
@@ -51,7 +51,11 @@ CreatePseudoViewModel viewModel;
             }
 
             private boolean verified() {
-                return true;
+
+                if(code.getText().toString().isEmpty())
+                    Toast.makeText(getActivity(),"Please enter code",Toast.LENGTH_LONG);
+    else         return true;
+    return false;
             }
         });
         return view;
