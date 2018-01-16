@@ -8,5 +8,7 @@
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.tal.pseudo_share.ui.main.AbstractListFragment"
+    android:divider="@android:color/transparent"
+    android:dividerHeight="10.0sp"
 
     tools:listitem="@layout/list_item" />

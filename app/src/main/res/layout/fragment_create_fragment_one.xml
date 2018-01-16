@@ -20,7 +20,9 @@
         app:met_floatingLabel="normal"
         app:met_floatingLabelText="Pseudo Code Name"
         app:met_primaryColor="#ffffff"
-        app:met_singleLineEllipsis="true" />
+        app:met_singleLineEllipsis="true"
+        android:imeOptions="actionDone"
+        />
 
     <com.tal.pseudo_share.view.ListPickerEditText
         android:id="@+id/difficultyPicker"
@@ -29,7 +31,8 @@
         android:layout_marginStart="16dp"
         android:hint="Difficulty"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pseudoName" />
+        app:layout_constraintTop_toBottomOf="@+id/pseudoName"
+        />
 
     <com.tal.pseudo_share.view.ListPickerEditText
         android:id="@+id/typePicker"
@@ -38,7 +41,8 @@
         android:layout_marginStart="16dp"
         android:hint="Type"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/difficultyPicker" />
+        app:layout_constraintTop_toBottomOf="@+id/difficultyPicker"
+        />
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/pseudoImage"
@@ -66,14 +70,15 @@
         android:background="@drawable/login_handler_background"
         android:gravity="top"
         android:hint="Description"
-        android:inputType="textMultiLine"
         android:padding="5dp"
         android:textColor="#ffffff"
         android:textSize="14dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/typePicker" />
+        app:layout_constraintTop_toBottomOf="@+id/typePicker"
+        android:inputType="textMultiLine"
+        />
 
 
     <Button

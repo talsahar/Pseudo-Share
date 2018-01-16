@@ -18,17 +18,17 @@ public class OnlinePseudoFragment extends AbstractListFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
            data=myPseudoViewModel.getAllPseudos();
-        data.observe(this,new Observer<List<Pseudo>>() {
-            @Override
-            public void onChanged(@Nullable List<Pseudo> pseudos) {
-                adapter.notifyDataSetChanged();
-                    myPseudoViewModel.setProgressBarStatus(false);
-            }
-        });
+           super.observeData();
+
     }
 
     @Override
     public void onListFragmentInteraction(Pseudo item) {
+
+    }
+
+    @Override
+    public void onLongClickInteraction(Pseudo item) {
 
     }
 }

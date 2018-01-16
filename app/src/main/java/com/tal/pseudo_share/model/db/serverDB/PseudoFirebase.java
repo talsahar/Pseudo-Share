@@ -11,6 +11,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.tal.pseudo_share.data.Pseudo;
+import com.tal.pseudo_share.model.utils.MyApplication;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -27,8 +28,7 @@ public class PseudoFirebase {
     public static void getAllPseudosAndObserve(@Nullable Long lastUpdate, final Callback<List<Pseudo>> callback){
         Log.d("TAG","getAllPseudoAndObserve from firebase");
         Query query=FirebaseDatabase.getInstance().getReference("pseudos");
-        if(lastUpdate!=null)
-            query=query.orderByChild("lastUpdate").startAt(lastUpdate);
+        query=query.orderByChild("lastUpdate").startAt(lastUpdate);
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -39,14 +39,15 @@ public class PseudoFirebase {
              callback.onComplete(list);
             }
             @Override
-            public void onCancelled(DatabaseError databaseError) {callback.onComplete(null);}
+            public void onCancelled(DatabaseError databaseError) {
+                //callback.onComplete(null);
+                }
         });
     }
 
     public static void addPseudo(Pseudo pseudo,OnCompleteListener<Void> onComplete){
         Log.d("TAG","adding pseudo to firebase");
         HashMap<String,Object> map=pseudo.toJson();
-        map.put("lastUpdate", ServerValue.TIMESTAMP);
         FirebaseDatabase.getInstance().getReference("pseudos").child(pseudo.id).setValue(map).addOnCompleteListener(onComplete);
     }
 

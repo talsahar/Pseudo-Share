@@ -21,7 +21,9 @@ import android.widget.ProgressBar;
 
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.data.Pseudo;
+import com.tal.pseudo_share.model.authentication.AuthenticationRepository;
 import com.tal.pseudo_share.ui.creation.CreatePseudoActivity;
+import com.tal.pseudo_share.viewmodel.AuthenticationViewModel;
 import com.tal.pseudo_share.viewmodel.MyPseudoViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 case 1:
                     return new OnlinePseudoFragment();
                 case 2:
-                    return new MyPseudoFragment();
+                    return new AboutFragment();
                 default:
                     return null; // Problem occurs at this condition!
             }
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings:
                 break;
             case R.id.action_logout:
+                ViewModelProviders.of(this).get(AuthenticationViewModel.class).signout();
                 finish();
                 break;
         }

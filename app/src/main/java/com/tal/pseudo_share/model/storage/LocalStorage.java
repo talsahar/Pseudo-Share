@@ -32,7 +32,7 @@ public class LocalStorage {
             bitmap = BitmapFactory.decodeStream(inputStream);
             Log.d("tag","got image from cache: " + imageFileName);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+return null;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,15 +68,5 @@ public class LocalStorage {
         MyApplication.getMyContext().sendBroadcast(mediaScanIntent);
     }
 
-    public static boolean isExists(String fname){
-        File dir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        if (!dir.exists()) {
-            return false;
-        }
-        for(String s:dir.list())
-            if(s.equals(fname))
-                return true;
-        return false;
-    }
+
 }

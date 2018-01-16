@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.tal.pseudo_share.R;
@@ -13,7 +14,7 @@ import com.tal.pseudo_share.data.Pseudo;
 
 import java.util.List;
 
-public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
+public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder>{
 
     private final MutableLiveData<List<Pseudo>> mValues;
     private final OnListFragmentInteractionListener mListener;
@@ -36,12 +37,14 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-
                     mListener.onListFragmentInteraction(holder.mItem);
-                }
+            }
+        });
+        holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mListener.onListFragmentInteraction(holder.mItem);
+                return true;
             }
         });
     }
@@ -50,6 +53,8 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     public int getItemCount() {
         return mValues.getValue().size();
     }
+
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
@@ -78,5 +83,9 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     }
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(Pseudo item);
+        void onLongClickInteraction(Pseudo item);
+
     }
+
+
 }

@@ -9,19 +9,30 @@ import android.net.Uri;
 
 public class ImageStorageModel {
 
-    public static void storeImage(Bitmap bitmap, String name, FirebaseStorageModel.OnUploadCompleteListener listener){
-            LocalStorage.saveImageToFile(bitmap,name);
-            FirebaseStorageModel.storeImage(bitmap, name, listener);
-        }
+    public static void storeImage(final Bitmap bitmap, final String name, final FirebaseStorageModel.OnUploadCompleteListener listener) {
+        FirebaseStorageModel.storeImage(bitmap, name, new FirebaseStorageModel.OnUploadCompleteListener() {
+            @Override
+            public void onUploadComplete(Uri result) {
+                LocalStorage.saveImageToFile(bitmap, result.toString());
+                listener.onUploadComplete(result);
+            }
 
-        public static void loadImage(final String path, final FirebaseStorageModel.OnDownloadCompleteListener listener){
+            @Override
+            public void onUploadFailed(Exception exception) {exception.printStackTrace();
+            listener.onUploadFailed(exception);
+            }
+        });
+    }
+
+    public static void loadImage(final String path, final FirebaseStorageModel.OnDownloadCompleteListener listener) {
         Bitmap imageBitmap;
-        if(LocalStorage.isExists(getFileNameFromPath(path)))
-        if ((imageBitmap=LocalStorage.loadImageFromFile(path))==null){
+        if ((imageBitmap = LocalStorage.loadImageFromFile(path)) != null)
+            listener.onDownloadComplete(imageBitmap);
+        else {
             FirebaseStorageModel.loadImage(path, new FirebaseStorageModel.OnDownloadCompleteListener() {
                 @Override
                 public void onDownloadComplete(Bitmap result) {
-                    LocalStorage.saveImageToFile(result,getFileNameFromPath(path));
+                    LocalStorage.saveImageToFile(result, path);
                     listener.onDownloadComplete(result);
                 }
 
@@ -31,12 +42,9 @@ public class ImageStorageModel {
                 }
             });
         }
-        }
-        public static String getFileNameFromPath(String path){
-            String[] s=path.split("token=");
-            return s[1]+".jpg";
-        }
-
     }
+
+
+}
 
 

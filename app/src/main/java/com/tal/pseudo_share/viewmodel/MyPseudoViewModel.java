@@ -26,7 +26,6 @@ public class MyPseudoViewModel extends ViewModel {
     private MutableLiveData<Exception> exceptionMutableLiveData;
     private MutableLiveData<Boolean> progressBarStatus = new MutableLiveData<>();
 
-
     public MyPseudoViewModel() {
 
     }

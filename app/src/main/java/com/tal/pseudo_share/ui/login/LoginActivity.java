@@ -17,6 +17,8 @@ import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.ui.main.MainActivity;
 import com.tal.pseudo_share.viewmodel.AuthenticationViewModel;
 
+import java.util.concurrent.Future;
+
 
 public class LoginActivity extends AppCompatActivity {
     EditText userField;
@@ -39,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+
         viewModel.getUserLiveData().observe(this, new Observer<FirebaseUser>() {
             @Override
             public void onChanged(@Nullable FirebaseUser firebaseUser) {
@@ -49,6 +52,9 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+
+        viewModel.loadCurrUser();
+
         userField = findViewById(R.id.userField);
         passField = findViewById(R.id.passField);
         nickField = findViewById(R.id.nickname);

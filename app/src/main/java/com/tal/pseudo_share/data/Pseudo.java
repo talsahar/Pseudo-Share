@@ -31,7 +31,7 @@ public class Pseudo {
     private String description;
     private String imageUrl;
     private String content;
-    public long lastUpdated;
+    public long lastUpdate;
 
     public HashMap<String,Object> toJson(){
         HashMap<String, Object> result = new HashMap<>();
@@ -44,14 +44,14 @@ public class Pseudo {
         result.put("description", description);
         result.put("imageUrl", imageUrl);
         result.put("content", content);
-        result.put("lastUpdated", ServerValue.TIMESTAMP);
+        result.put("lastUpdate", ServerValue.TIMESTAMP);
         return result;
     }
 
     public Pseudo() {
     }
 
-    public Pseudo(@NonNull String id, long date, String name, String difficulty, String type, String author, String description, String imageUrl, String content, long lastUpdated) {
+    public Pseudo(@NonNull String id, long date, String name, String difficulty, String type, String author, String description, String imageUrl, String content, long lastUpdate) {
         this.id = id;
         this.date = date;
         this.name = name;
@@ -61,7 +61,7 @@ public class Pseudo {
         this.description = description;
         this.imageUrl = imageUrl;
         this.content = content;
-        this.lastUpdated = lastUpdated;
+        this.lastUpdate = lastUpdate;
     }
 
     @NonNull
@@ -137,11 +137,11 @@ public class Pseudo {
         this.content = content;
     }
 
-    public long getLastUpdated() {
-        return lastUpdated;
+    public long getLastUpdate() {
+        return lastUpdate;
     }
 
-    public void setLastUpdated(long lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    public void setLastUpdate(long lastUpdated) {
+        this.lastUpdate = lastUpdated;
     }
 }

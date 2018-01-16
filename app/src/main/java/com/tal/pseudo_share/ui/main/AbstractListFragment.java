@@ -47,7 +47,14 @@ abstract class AbstractListFragment extends Fragment implements MyItemRecyclerVi
     }
 
 
-
-
-
+    public  void observeData(){
+        data.observe(this,new Observer<List<Pseudo>>() {
+            @Override
+            public void onChanged(@Nullable List<Pseudo> pseudos) {
+                adapter.notifyDataSetChanged();
+                if(pseudos.size()>0){
+                    myPseudoViewModel.setProgressBarStatus(false);
+                }            }
+        });
+    }
 }

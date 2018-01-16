@@ -3,8 +3,8 @@ package com.tal.pseudo_share.model.storage;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -13,6 +13,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.net.URL;
 
 /**
  * Created by User on 21/12/2017.
@@ -45,7 +46,7 @@ public class FirebaseStorageModel {
     }
 
     public static void loadImage(String path,final OnDownloadCompleteListener listener){
-    FirebaseStorage storage=FirebaseStorage.getInstance();
+  /*  FirebaseStorage storage=FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference().child("images").child(path);
         final long ONE_MEGABYTE = 1024 * 1024;
         storageRef.getBytes(3* ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -61,7 +62,31 @@ public class FirebaseStorageModel {
                 listener.onDownloadFailed(exception);
             }
         });
+*/
+  new AsyncTask<String, Integer, Bitmap>(){
 
+      @Override
+      protected Bitmap doInBackground(String... string) {
+          URL url= null;
+          try {
+              url = new URL(string[0]);
+              return BitmapFactory.decodeStream(url.openConnection().getInputStream());
+          } catch (java.io.IOException e) {
+              e.printStackTrace();
+          }
+          return null;
+      }
+
+      @Override
+      protected void onPostExecute(Bitmap bitmap) {
+          super.onPostExecute(bitmap);
+          if(bitmap!=null)
+          listener.onDownloadComplete(bitmap);
+          else
+              listener.onDownloadFailed(null);
+
+      }
+  }.execute(path);
     }
     public interface OnUploadCompleteListener{
         void onUploadComplete(Uri result);

@@ -1,71 +1,78 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.tal.pseudo_share.ui.creation.CreateFragmentTwo">
 
-    <EditText
-        android:id="@+id/code"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="464dp"
-        android:layout_margin="10dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/login_handler_background"
-        android:gravity="top"
-        android:hint="Your Code"
-        android:inputType="textMultiLine"
-        android:padding="5dp"
-        android:fontFamily="monospace"
-        android:textColor="#ffffff"
-        app:layout_constraintBottom_toTopOf="@+id/DoneCreationButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent">
+        <EditText
+            android:id="@+id/code"
+            android:layout_width="match_parent"
+            android:layout_height="464dp"
+            android:layout_margin="10dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/login_handler_background"
+            android:gravity="top"
+            android:hint="Your Code"
+            android:inputType="textMultiLine|textFilter|textNoSuggestions"
+            android:padding="5dp"
+            android:fontFamily="monospace"
+            android:textColor="#ffffff"
+            app:layout_constraintBottom_toTopOf="@+id/DoneCreationButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
-    <Button
-        android:id="@+id/DoneCreationButton"
-        android:layout_width="133dp"
-        android:layout_height="49dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/login_handler_background"
-        android:text="Done"
-        android:textSize="17dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/fontSizePicker"
-        app:layout_constraintStart_toEndOf="@+id/fontColorPicker" />
+        <Button
+            android:id="@+id/DoneCreationButton"
+            android:layout_width="133dp"
+            android:layout_height="49dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/login_handler_background"
+            android:text="Done"
+            android:textSize="17dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/fontSizePicker"
+            app:layout_constraintStart_toEndOf="@+id/fontColorPicker" />
 
-    <com.tal.pseudo_share.view.ListPickerEditText
-        android:id="@+id/fontColorPicker"
-        android:layout_width="88dp"
-        android:layout_height="49dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
-        android:hint="Font Color"
-        android:textColor="#ffffff"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <com.tal.pseudo_share.view.ListPickerEditText
+            android:id="@+id/fontColorPicker"
+            android:layout_width="88dp"
+            android:layout_height="49dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:hint="Font Color"
+            android:textColor="#ffffff"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    <com.tal.pseudo_share.view.ListPickerEditText
-        android:id="@+id/fontSizePicker"
-        android:layout_width="88dp"
-        android:layout_height="49dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:hint="Font Size"
-        android:textColor="#ffffff"
-        app:met_baseColor="#ffffff"
-        app:met_primaryColor="#ffffff"
-        app:met_textColor="#ffffff"
-        android:textColorHint="#ffffff"
-        app:met_textColorHint="#ffffff"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <com.tal.pseudo_share.view.ListPickerEditText
+            android:id="@+id/fontSizePicker"
+            android:layout_width="88dp"
+            android:layout_height="49dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:hint="Font Size"
+            android:textColor="#ffffff"
+            app:met_baseColor="#ffffff"
+            app:met_primaryColor="#ffffff"
+            app:met_textColor="#ffffff"
+            android:textColorHint="#ffffff"
+            app:met_textColorHint="#ffffff"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
 
-</android.support.constraint.ConstraintLayout>
+
+
+</FrameLayout>

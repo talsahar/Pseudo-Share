@@ -18,11 +18,6 @@ public interface PseudoDao{
     @Query("SELECT * FROM Pseudo")
     List<Pseudo> getAll();
 
-    @Query("SELECT * FROM Pseudo WHERE id IN (:userIds)")
-    List<Pseudo> loadAllByIds(int[] userIds);
-
-    @Query("SELECT * FROM Pseudo WHERE id = :id")
-    Pseudo findById(String id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Pseudo... pseudos);
