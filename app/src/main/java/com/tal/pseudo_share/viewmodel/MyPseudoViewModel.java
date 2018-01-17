@@ -58,4 +58,7 @@ public class MyPseudoViewModel extends ViewModel {
         return progressBarStatus;
     }
 
+    public void deletePseudo(Pseudo pseudo) {
+        PseudoRepository.deletePseudo(pseudo);
+    }
 }

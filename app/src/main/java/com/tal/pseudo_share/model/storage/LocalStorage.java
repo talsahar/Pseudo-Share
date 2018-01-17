@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import com.tal.pseudo_share.data.Pseudo;
 import com.tal.pseudo_share.model.utils.MyApplication;
 
 import java.io.File;
@@ -24,6 +25,8 @@ import java.io.OutputStream;
 public class LocalStorage {
 
     public static Bitmap loadImageFromFile(String imageFileName){
+        if(imageFileName==null||imageFileName.isEmpty())
+            return null;
         Bitmap bitmap = null;
         try {
             File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
@@ -69,4 +72,10 @@ return null;
     }
 
 
+    public static void deleteImage(String fileName) {
+            File dir = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_PICTURES);
+            File imageFile = new File(dir,fileName);
+            imageFile.delete();
+    }
 }

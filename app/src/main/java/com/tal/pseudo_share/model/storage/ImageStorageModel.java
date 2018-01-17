@@ -13,7 +13,7 @@ public class ImageStorageModel {
         FirebaseStorageModel.storeImage(bitmap, name, new FirebaseStorageModel.OnUploadCompleteListener() {
             @Override
             public void onUploadComplete(Uri result) {
-                LocalStorage.saveImageToFile(bitmap, result.toString());
+                LocalStorage.saveImageToFile(bitmap, result.toString().split("token=")[1]);
                 listener.onUploadComplete(result);
             }
 
@@ -26,13 +26,13 @@ public class ImageStorageModel {
 
     public static void loadImage(final String path, final FirebaseStorageModel.OnDownloadCompleteListener listener) {
         Bitmap imageBitmap;
-        if ((imageBitmap = LocalStorage.loadImageFromFile(path)) != null)
-            listener.onDownloadComplete(imageBitmap);
-        else {
+//        if ((imageBitmap = LocalStorage.loadImageFromFile(path.split("token=")[1])) != null)
+  //          listener.onDownloadComplete(imageBitmap);
+    //    else {
             FirebaseStorageModel.loadImage(path, new FirebaseStorageModel.OnDownloadCompleteListener() {
                 @Override
                 public void onDownloadComplete(Bitmap result) {
-                    LocalStorage.saveImageToFile(result, path);
+                    LocalStorage.saveImageToFile(result, path.split("token=")[1]);
                     listener.onDownloadComplete(result);
                 }
 
@@ -41,7 +41,7 @@ public class ImageStorageModel {
                     listener.onDownloadFailed(exception);
                 }
             });
-        }
+      //  }
     }
 
 

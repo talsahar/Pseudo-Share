@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
@@ -22,6 +23,10 @@ import java.util.List;
  */
 
 public class PseudoFirebase {
+    public static void deletePseudoById(String id, DatabaseReference.CompletionListener listener) {
+        FirebaseDatabase.getInstance().getReference("pseudos").child(id).removeValue(listener);
+    }
+
     public interface Callback<T> {
         void onComplete(T data);
     }

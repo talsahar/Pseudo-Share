@@ -29,28 +29,29 @@ public class MyPseudoFragment extends AbstractListFragment {
 
 
     @Override
-    public void onListFragmentInteraction(Pseudo item) {
-        Intent intent = new Intent(getActivity(), DetailsActivity.class);
-        intent.putExtra("id", item.getId());
-        startActivity(intent);
-    }
-
-    @Override
-    public void onLongClickInteraction(final Pseudo item) {
+    public void onListFragmentInteraction(final Pseudo item) {
         String[] options = {"Details", "Edit", "Delete"};
         ListAlertDialog optionFragment = ListAlertDialog.newInstance("Choose your action", options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                myPseudoViewModel.setProgressBarStatus(true);
                 if (which == 0) {
-                    onLongClickInteraction(item);
+                    Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                    intent.putExtra("id", item.getId());
+                    startActivity(intent);
                 } else if (which == 1) {
-                } else {
-
+                } else if(which==2) {
+                    myPseudoViewModel.deletePseudo(item);
                 }
             }
         });
         optionFragment.show(getActivity().getFragmentManager(),
                 "TAG");
+
+
+    }
+
+    @Override
+    public void onLongClickInteraction(final Pseudo item) {
+
     }
 }

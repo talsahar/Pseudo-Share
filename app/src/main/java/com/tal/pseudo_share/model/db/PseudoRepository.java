@@ -11,10 +11,13 @@ import android.util.Log;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.tal.pseudo_share.model.db.serverDB.PseudoFirebase;
 import com.tal.pseudo_share.data.Pseudo;
 import com.tal.pseudo_share.model.storage.FirebaseStorageModel;
 import com.tal.pseudo_share.model.storage.ImageStorageModel;
+import com.tal.pseudo_share.model.storage.LocalStorage;
 import com.tal.pseudo_share.model.utils.MyApplication;
 import com.tal.pseudo_share.model.utils.PseudoSorter;
 
@@ -38,7 +41,7 @@ public class PseudoRepository {
     }
 
     public static void storePseudo(final Pseudo pseudo, Bitmap imageBitmap, final Runnable onComplete) {
-        ImageStorageModel.storeImage(imageBitmap, pseudo.id + ".jpg", new FirebaseStorageModel.OnUploadCompleteListener() {
+        FirebaseStorageModel.OnUploadCompleteListener listener=new FirebaseStorageModel.OnUploadCompleteListener() {
             @Override
             public void onUploadComplete(Uri result) {
                 pseudo.setImageUrl(result.toString());
@@ -53,10 +56,14 @@ public class PseudoRepository {
 
             @Override
             public void onUploadFailed(Exception exception) {
-                exceptionMutableLiveData.setValue(exception);
-                Log.d("TAG", "failed uploading image");
+
             }
-        });
+        };
+
+        if(imageBitmap!=null)
+        ImageStorageModel.storeImage(imageBitmap, pseudo.id + ".jpg",listener);
+            else
+                listener.onUploadComplete( Uri.parse(""));
     }
 
     //load async and return mutableData
@@ -117,6 +124,7 @@ public class PseudoRepository {
     }
 
     public static MutableLiveData<Bitmap> loadPseudoDrawable(String path) {
+
        final MutableLiveData<Bitmap> drawableMutableLiveData=new MutableLiveData<>();
         ImageStorageModel.loadImage(path, new FirebaseStorageModel.OnDownloadCompleteListener() {
             @Override
@@ -131,6 +139,20 @@ public class PseudoRepository {
             }
         });
         return drawableMutableLiveData;
+    }
+
+    public static void deletePseudo(final Pseudo pseudo) {
+        LocalStorage.deleteImage(pseudo.getId());
+        PseudoFirebase.deletePseudoById(pseudo.getId(), new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                AppLocalStore.db.pseudoDao().delete(pseudo);
+                pseudoListLiveData.getValue().remove(pseudo);
+                pseudoListLiveData.setValue(pseudoListLiveData.getValue());
+                myPseudos.getValue().remove(pseudo);
+                myPseudos.setValue(pseudoListLiveData.getValue());
+            }
+        });
     }
 
     static class StoreOnLocalTask extends AsyncTask<List<Pseudo>, String, List<Pseudo>> {
