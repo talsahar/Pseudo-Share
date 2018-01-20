@@ -1,28 +1,18 @@
 package com.tal.pseudo_share.model.db;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.tal.pseudo_share.model.db.serverDB.PseudoFirebase;
 import com.tal.pseudo_share.data.Pseudo;
-import com.tal.pseudo_share.model.storage.FirebaseStorageModel;
-import com.tal.pseudo_share.model.storage.ImageStorageModel;
-import com.tal.pseudo_share.model.storage.LocalStorage;
-import com.tal.pseudo_share.model.utils.MyApplication;
-import com.tal.pseudo_share.model.utils.PseudoSorter;
+import com.tal.pseudo_share.model.AuthenticationRepository;
+import com.tal.pseudo_share.utilities.Callback;
+import com.tal.pseudo_share.viewmodel.PseudoListLiveData;
+import com.tal.pseudo_share.viewmodel.StaticMutablesHolder;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 /**
  * Created by User on 06/01/2018.
@@ -30,174 +20,122 @@ import java.util.List;
 
 public class PseudoRepository {
 
-    static MutableLiveData<List<Pseudo>> pseudoListLiveData = new MutableLiveData<>();
-    static MutableLiveData<List<Pseudo>> myPseudos = new MutableLiveData<>();
+    PseudoListLiveData pseudoListLiveData;
+    Callback<Exception> exceptionCallback;
 
-    static MutableLiveData<Exception> exceptionMutableLiveData = new MutableLiveData<>();
 
-    static {
-        pseudoListLiveData.setValue(new LinkedList<Pseudo>());
-        myPseudos.setValue(new LinkedList<Pseudo>());
+    public static class Holder {
+        static final PseudoRepository instance = new PseudoRepository();
     }
 
-    public static void storePseudo(final Pseudo pseudo, Bitmap imageBitmap, final Runnable onComplete) {
-        FirebaseStorageModel.OnUploadCompleteListener listener=new FirebaseStorageModel.OnUploadCompleteListener() {
+    public static PseudoRepository getInstance() {
+        return Holder.instance;
+    }
+
+    private PseudoRepository() {
+        semaphore = new Semaphore(1);
+        exceptionCallback = new Callback<Exception>() {
             @Override
-            public void onUploadComplete(Uri result) {
-                pseudo.setImageUrl(result.toString());
-                PseudoFirebase.addPseudo(pseudo, new OnCompleteListener<Void>() {
+            public void call(Exception exception) {
+                StaticMutablesHolder.exceptionMutableLiveData.setValue(exception);
+                StaticMutablesHolder.progressStatus.setValue(false);
+            }
+        };
+        String username = AuthenticationRepository.getCurrUsername();
+        if (username == null)
+            throw new NullPointerException("null username reference");
+        else pseudoListLiveData = PseudoListLiveData.getInstance(username);
+    }
+
+    public void storePseudo(final Pseudo pseudo, Bitmap imageBitmap, final Runnable onComplete) {
+        StaticMutablesHolder.progressStatus.setValue(true);
+        MyStorage.imageStorageManager.storeImage(imageBitmap, pseudo.getImageFileName(), new Callback<Uri>() {
+            @Override
+            public void call(Uri data) {
+                if (data != null)
+                    pseudo.setImageUrl(data.toString());
+                MyStorage.firebaseDb.addPseudo(pseudo, new Callback<Pseudo>() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        AppLocalStore.db.pseudoDao().insertAll(pseudo);
+                    public void call(Pseudo data) {
+                        MyStorage.database.pseudoDao().insert(pseudo);
                         onComplete.run();
+                        StaticMutablesHolder.progressStatus.setValue(false);
                     }
                 });
             }
-
-            @Override
-            public void onUploadFailed(Exception exception) {
-
-            }
-        };
-
-        if(imageBitmap!=null)
-        ImageStorageModel.storeImage(imageBitmap, pseudo.id + ".jpg",listener);
-            else
-                listener.onUploadComplete( Uri.parse(""));
+        }, exceptionCallback);
     }
 
     //load async and return mutableData
-    public static MutableLiveData<Pseudo> loadPseudoById(final String id) {
+    public LiveData<Pseudo> loadPseudoById(final String id) {
+        StaticMutablesHolder.progressStatus.setValue(true);
         final MutableLiveData<Pseudo> pseudo = new MutableLiveData<>();
-        new AsyncTask<String, String, Pseudo>() {
+        for (Pseudo p : pseudoListLiveData.getValue()) {
+            if (p.getId().equals(id)) {
+                pseudo.setValue(p);
+                return pseudo;
+            }
+        }
+        return null;
+    }
+
+    private Semaphore semaphore;
+
+    public LiveData<List<Pseudo>> getAllPseudos() {
+        StaticMutablesHolder.progressStatus.setValue(true);
+        long lastUpdateDate = MyStorage.getLastUpdate();
+        MyStorage.firebaseDb.getAllPseudosAndObserve(lastUpdateDate, new Callback<List<Pseudo>>() {
             @Override
-            protected Pseudo doInBackground(String... id) {
-                for (Pseudo p : pseudoListLiveData.getValue()) {
-                    if (p.getId().equals(id[0])) {
-                        return p;
+            public void call(List<Pseudo> data) {
+                new NewPseudosHandler(semaphore, pseudoListLiveData, new Runnable() {
+                    @Override
+                    public void run() {
+                        StaticMutablesHolder.progressStatus.setValue(false);
                     }
-                }
-                return null;
+                }).execute(data);
             }
-
-            @Override
-            protected void onPostExecute(Pseudo p) {
-                super.onPostExecute(p);
-                if(p!=null)
-                    pseudo.setValue(p);
-            }
-        }.execute(id);
-
-        return pseudo;
-        }
-
-
-    private static boolean lock = false;
-    private static boolean haveLoaded = false;
-
-    public static MutableLiveData<List<Pseudo>> getAllPseudos() {
-        //its binding will called one time
-        long lastUpdateDate = MyApplication.getLastUpdate();
-        if (haveLoaded == false && lock == false) {
-            lock = true;
-            PseudoFirebase.getAllPseudosAndObserve(lastUpdateDate, new PseudoFirebase.Callback<List<Pseudo>>() {
-                @Override//update local
-                public void onComplete(List<Pseudo> data) {
-                    StoreOnLocalTask task = new StoreOnLocalTask();
-                    task.execute(data);
-                }
-            });
-        }
-
+        });
         return pseudoListLiveData;
     }
 
-    public static MutableLiveData<List<Pseudo>> getMyPseudos() {
-        if (haveLoaded == false)
-            getAllPseudos();
-        return myPseudos;
-    }
 
-
-    public static MutableLiveData<Exception> getExceptionMutableLiveData() {
-        return exceptionMutableLiveData;
-    }
-
-    public static MutableLiveData<Bitmap> loadPseudoDrawable(String path) {
-
-       final MutableLiveData<Bitmap> drawableMutableLiveData=new MutableLiveData<>();
-        ImageStorageModel.loadImage(path, new FirebaseStorageModel.OnDownloadCompleteListener() {
+    public LiveData<Bitmap> loadPseudoDrawable(String path) {
+        StaticMutablesHolder.progressStatus.setValue(true);
+        final MutableLiveData<Bitmap> drawableMutableLiveData = new MutableLiveData<>();
+        MyStorage.imageStorageManager.loadImage(path, new Callback<Bitmap>() {
             @Override
-            public void onDownloadComplete(Bitmap result) {
-               drawableMutableLiveData.setValue(result);
+            public void call(Bitmap data) {
+                drawableMutableLiveData.setValue(data);
+                StaticMutablesHolder.progressStatus.setValue(false);
             }
-
+        }, new Callback<Exception>() {
             @Override
-            public void onDownloadFailed(Exception exception) {
+            public void call(Exception data) {
                 drawableMutableLiveData.setValue(null);
-
+                exceptionCallback.call(data);
+                StaticMutablesHolder.progressStatus.setValue(false);
             }
         });
         return drawableMutableLiveData;
     }
 
-    public static void deletePseudo(final Pseudo pseudo) {
-        LocalStorage.deleteImage(pseudo.getId());
-        PseudoFirebase.deletePseudoById(pseudo.getId(), new DatabaseReference.CompletionListener() {
+    public void deletePseudo(final Pseudo pseudo) {
+        StaticMutablesHolder.progressStatus.setValue(true);
+        if (pseudo.getImageUrl() != null && !pseudo.getImageUrl().isEmpty())
+            MyStorage.imageStorageManager.deleteImage(pseudo.getImageUrl(), true);
+        MyStorage.database.pseudoDao().delete(pseudo);
+        pseudoListLiveData.removeIfContains(pseudo);
+
+        MyStorage.firebaseDb.deletePseudo(pseudo, new Callback<Pseudo>() {
             @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                AppLocalStore.db.pseudoDao().delete(pseudo);
-                pseudoListLiveData.getValue().remove(pseudo);
-                pseudoListLiveData.setValue(pseudoListLiveData.getValue());
-                myPseudos.getValue().remove(pseudo);
-                myPseudos.setValue(pseudoListLiveData.getValue());
+            public void call(Pseudo data) {
+                StaticMutablesHolder.progressStatus.setValue(false);
             }
         });
     }
 
-    static class StoreOnLocalTask extends AsyncTask<List<Pseudo>, String, List<Pseudo>> {
-        @Override
-        protected List<Pseudo> doInBackground(List<Pseudo>[] lists) {
-            if (lists.length == 1) {
-                List<Pseudo> data = lists[0];
-                if (data != null && data.size() > 0) {
-                    //3. update the local DB
-                    long lastUpdate = MyApplication.getLastUpdate();
-                    for (Pseudo pseudo : data) {
-                        AppLocalStore.db.pseudoDao().insertAll(pseudo);
-                        if (pseudo.lastUpdate > lastUpdate) {
-                            lastUpdate = pseudo.lastUpdate;
-                        }
-                    }
-                    MyApplication.updateLastUpdate(lastUpdate);
-                }
-                List<Pseudo> pseudoList = AppLocalStore.db.pseudoDao().getAll();
-/*
-for(Pseudo p:pseudoList)
-    AppLocalStore.db.pseudoDao().delete(p);
-
-*/
-                Log.d("TAG", "finish store on local task in thread");
-                PseudoSorter.sortbyDate(pseudoList);
-                return pseudoList;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<Pseudo> pseudos) {
-            super.onPostExecute(pseudos);
-            pseudoListLiveData.setValue(pseudos);
-            List<Pseudo> myPseudosTMP = new LinkedList<>();
-            for (Pseudo p : pseudos) {
-                String s = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-                if (p.getAuthor().equals(s))
-                    myPseudosTMP.add(p);
-            }
-            myPseudos.setValue(myPseudosTMP);
-            haveLoaded = true;
-            lock = false;
-        }
+    public LiveData<List<Pseudo>> getMyPseudos() {
+        return pseudoListLiveData.getMyPseudosLiveData();
     }
 
 

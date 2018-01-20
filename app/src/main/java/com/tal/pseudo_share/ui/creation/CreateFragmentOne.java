@@ -66,7 +66,7 @@ public class CreateFragmentOne extends Fragment {
 
         typePicker = view.findViewById(R.id.typePicker);
         typePicker.setFloatingLabelText("Choose Subdomain");
-        String[] pseudoTypes = Arrays.toString(PseudoType.values()).replaceAll("^.|.$", "").split(", ");
+        final String[] pseudoTypes = Arrays.toString(PseudoType.values()).replaceAll("^.|.$", "").split(", ");
         typePicker.handleDialog(new ListPickerEditText.MyPickerDialog(pseudoTypes, "Choose Algorithm Subdomain"));
 
         picture = view.findViewById(R.id.pseudoImage);
@@ -74,10 +74,9 @@ public class CreateFragmentOne extends Fragment {
             @Override
             public void onClick(View v) {
                 String[] options = {"Camera", "Gallery"};
-                ListAlertDialog newFragment = ListAlertDialog.newInstance("Choose Image Source", options, new DialogInterface.OnClickListener() {
+                ListAlertDialog.newInstance("Choose Image Source", options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        viewModel.setProgressBarStatus(true);
                         if (which == 0) {
                             Intent intent = new Intent(
                                     MediaStore.ACTION_IMAGE_CAPTURE);
@@ -91,11 +90,8 @@ public class CreateFragmentOne extends Fragment {
                             startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
                         }
                     }
-                });
-                newFragment.show(getActivity().getFragmentManager(),
+                }).show(getActivity().getFragmentManager(),
                         "TAG");
-
-
             }
         });
 
@@ -103,10 +99,10 @@ public class CreateFragmentOne extends Fragment {
             @Override
             public void onClick(View v) {
                 if (verifyFields()) {
-                    viewModel.getUnreadyPseudo().setDescription(description.getText().toString());
-                    viewModel.getUnreadyPseudo().difficulty = (difficultyPicker.getText().toString());
-                    viewModel.getUnreadyPseudo().type = (typePicker.getText().toString());
-                    viewModel.getUnreadyPseudo().setName(title.getText().toString());
+                    viewModel.getUnreadyPseudo().setDescription(description.getText().toString())
+                    .setDifficulty(Difficulty.valueOf(difficultyPicker.getText().toString()))
+                    .setPseudoType(PseudoType.valueOf(typePicker.getText().toString()))
+                    .setName(title.getText().toString());
                     Fragment newFragment = new CreateFragmentTwo();
                     FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                     transaction.replace(R.id.contentContainer, newFragment);
@@ -143,7 +139,6 @@ public class CreateFragmentOne extends Fragment {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             picture.setImageBitmap(imageBitmap);
             viewModel.setImageBitmap(imageBitmap);
-            viewModel.setProgressBarStatus(false);
         }
     }
 }

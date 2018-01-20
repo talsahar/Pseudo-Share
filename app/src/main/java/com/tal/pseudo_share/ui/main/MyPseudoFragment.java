@@ -1,5 +1,6 @@
 package com.tal.pseudo_share.ui.main;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,7 +24,7 @@ public class MyPseudoFragment extends AbstractListFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        data = myPseudoViewModel.getMyPseudos();
+        data = allPseudoViewModel.getMyPseudos();
         super.observeData();
     }
 
@@ -31,23 +32,20 @@ public class MyPseudoFragment extends AbstractListFragment {
     @Override
     public void onListFragmentInteraction(final Pseudo item) {
         String[] options = {"Details", "Edit", "Delete"};
-        ListAlertDialog optionFragment = ListAlertDialog.newInstance("Choose your action", options, new DialogInterface.OnClickListener() {
+        ListAlertDialog.newInstance("Choose your action", options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) {
-                    Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                    intent.putExtra("id", item.getId());
-                    startActivity(intent);
-                } else if (which == 1) {
-                } else if(which==2) {
-                    myPseudoViewModel.deletePseudo(item);
-                }
+             switch (which){
+                 case 0:Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                     intent.putExtra("id", item.getId());
+                     startActivity(intent);
+                     break;
+                 case 1:
+                     break;
+                 case 2:allPseudoViewModel.deletePseudo(item);
+             }
             }
-        });
-        optionFragment.show(getActivity().getFragmentManager(),
-                "TAG");
-
-
+        }).show(getActivity().getFragmentManager(),"TAG");
     }
 
     @Override

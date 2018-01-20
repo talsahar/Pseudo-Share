@@ -39,7 +39,6 @@ DetailsViewModel detailsViewModel;
         final View view=inflater.inflate(R.layout.fragment_details_fragment_two, container, false);
         String id=getActivity().getIntent().getStringExtra("id");
         detailsViewModel = ViewModelProviders.of(getActivity()).get(DetailsViewModel.class);
-        detailsViewModel.setProgressBarStatusMutableData(true);
         detailsViewModel.getPseudoLivedata(id).observe(this, new Observer<Pseudo>() {
                     @Override
                     public void onChanged(@Nullable Pseudo pseudo) {
@@ -55,7 +54,7 @@ DetailsViewModel detailsViewModel;
                 getActivity().finish();
             }
         });
-        detailsViewModel.setProgressBarStatusMutableData(false);
+
         return view;
     }
 

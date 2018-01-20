@@ -36,32 +36,29 @@ public class DetailsFragmentOne extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_details_fragment_one, container, false);
         String id = getActivity().getIntent().getStringExtra("id");
         detailsViewModel = ViewModelProviders.of(getActivity()).get(DetailsViewModel.class);
-        detailsViewModel.setProgressBarStatusMutableData(true);
         detailsViewModel.getPseudoLivedata(id).observe(this, new Observer<Pseudo>() {
             @Override
             public void onChanged(@Nullable Pseudo pseudo) {
-
                 //download image async
                 if (pseudo.getImageUrl() != null && !pseudo.getImageUrl().isEmpty())
-                    detailsViewModel.getDrawableLivedata(pseudo.id).observe(DetailsFragmentOne.this, new Observer<Bitmap>() {
+                    detailsViewModel.getDrawableLivedata(pseudo.getImageUrl()).observe(DetailsFragmentOne.this, new Observer<Bitmap>() {
                         @Override
                         public void onChanged(@Nullable Bitmap bitmap) {
                             if (bitmap != null) {
                                 ImageView image = view.findViewById(R.id.pseudoImage);
                                 image.setImageBitmap(bitmap);
                             }
-                            detailsViewModel.setProgressBarStatusMutableData(false);
                         }
                     });
-                else
-                    detailsViewModel.setProgressBarStatusMutableData(false);
 
                 TextView title = view.findViewById(R.id.pseudoName);
                 title.setText(pseudo.getName());
+                TextView author=view.findViewById(R.id.author);
+                author.setText(pseudo.getAuthor());
                 TextView difficulty = view.findViewById(R.id.difficultyText);
-                difficulty.setText(pseudo.getDifficulty());
+                difficulty.setText(pseudo.getDifficulty().name());
                 TextView type = view.findViewById(R.id.typeText);
-                type.setText(pseudo.getType());
+                type.setText(pseudo.getType().name());
                 ExpandableTextView description = (ExpandableTextView) view
                         .findViewById(R.id.expand_text_view);
                 description.setText(pseudo.getDescription());

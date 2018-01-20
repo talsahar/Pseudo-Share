@@ -21,12 +21,12 @@ public class ListAlertDialog extends DialogFragment {
     String[] options;
 
 
-    public static ListAlertDialog newInstance(String title, String[] options,DialogInterface.OnClickListener listener){
-ListAlertDialog dialog=new ListAlertDialog();
-dialog.listener=listener;
-dialog.title=title;
-dialog.options=options;
-return dialog;
+    public static ListAlertDialog newInstance(String title, String[] options, DialogInterface.OnClickListener listener) {
+        ListAlertDialog dialog = new ListAlertDialog();
+        dialog.listener = listener;
+        dialog.title = title;
+        dialog.options = options;
+        return dialog;
     }
 
     @Override
@@ -34,7 +34,7 @@ return dialog;
         AlertDialog.Builder builder = new
                 AlertDialog.Builder(getActivity());
         builder.setTitle(title)
-                .setItems(options,listener);
+                .setItems(options, listener);
         return builder.create();
     }
 

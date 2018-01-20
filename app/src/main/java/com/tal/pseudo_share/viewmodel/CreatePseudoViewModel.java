@@ -1,11 +1,12 @@
 package com.tal.pseudo_share.viewmodel;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.graphics.Bitmap;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.tal.pseudo_share.model.authentication.AuthenticationRepository;
+import com.tal.pseudo_share.model.AuthenticationRepository;
 import com.tal.pseudo_share.model.db.PseudoRepository;
 import com.tal.pseudo_share.data.Pseudo;
 
@@ -14,56 +15,43 @@ import java.util.UUID;
 /**
  * Created by User on 06/01/2018.
  */
-//get pseudo obj build your pseudo and call create
+//call getUndreadyPseudo()->Pseudo set your attributes then call updateLiveDate() when you ready to create the object.
 public class CreatePseudoViewModel extends ViewModel {
-    PseudoRepository pseudoRepository;
     private MutableLiveData<Pseudo> pseudoWhenReady;
-    Pseudo pseudoBuilder;
+    Pseudo.PseudoBuilder builder;
     Bitmap imageBitmap;
-    private MutableLiveData<Boolean> progressBarStatus;
 
-    public MutableLiveData<Pseudo> getLiveData(){
-        if(pseudoWhenReady==null)
-            pseudoWhenReady=new MutableLiveData<>();
+    public MutableLiveData<Pseudo> getPseudoLiveData() {
+        if (pseudoWhenReady == null)
+            pseudoWhenReady = new MutableLiveData<>();
         return pseudoWhenReady;
     }
-    public Pseudo getUnreadyPseudo(){
-        if(pseudoBuilder==null){
-            pseudoBuilder=new Pseudo();
-            pseudoBuilder.id=UUID.randomUUID().toString();
-            pseudoBuilder.setAuthor(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
+    //observe it in your activity, notifies when storing completed.
+    public Pseudo.PseudoBuilder getUnreadyPseudo() {
+        if (builder == null) {
+            builder = Pseudo.builder(UUID.randomUUID().toString());
+            builder.setAuthor(AuthenticationRepository.getUserMutableLiveData().getValue().getDisplayName());
         }
-        return pseudoBuilder;
+        return builder;
     }
 
-    //called when ready
-    public void updateLiveData(){
-        pseudoWhenReady.setValue(pseudoBuilder);
-
+    //called when you done building your pseudo. it will store it on storage.
+    public void updateLiveData() {
+        final Pseudo readyPseudo = builder.build();
+        PseudoRepository.getInstance().storePseudo(readyPseudo, imageBitmap, new Runnable() {
+            @Override
+            public void run() {
+                pseudoWhenReady.setValue(readyPseudo);
+            }
+        });
     }
-    public void build(final Runnable onComplete) {
-        if(pseudoRepository==null)
-            pseudoRepository=new PseudoRepository();
-        pseudoRepository.storePseudo(pseudoBuilder,imageBitmap,onComplete);
-        }
 
     public void setImageBitmap(Bitmap imageBitmap) {
         this.imageBitmap = imageBitmap;
     }
 
-    public void setProgressBarStatus(boolean b){
-        progressBarStatus.setValue(b);
-    }
-    public MutableLiveData<Boolean> getProgressBarStatus() {
-        if(progressBarStatus==null)
-            progressBarStatus=new MutableLiveData<>();
-        return progressBarStatus;
-    }
 
-    public void clear() {
-        pseudoWhenReady=null;
-        pseudoBuilder=null;
-        imageBitmap=null;
-    }
+
+
 }

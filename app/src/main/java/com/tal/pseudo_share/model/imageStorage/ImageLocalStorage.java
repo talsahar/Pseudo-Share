@@ -1,14 +1,9 @@
-package com.tal.pseudo_share.model.storage;
+package com.tal.pseudo_share.model.imageStorage;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
-
-import com.tal.pseudo_share.data.Pseudo;
-import com.tal.pseudo_share.model.utils.MyApplication;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,30 +17,31 @@ import java.io.OutputStream;
  * Created by User on 07/01/2018.
  */
 
-public class LocalStorage {
+public class ImageLocalStorage {
 
-    public static Bitmap loadImageFromFile(String imageFileName){
+
+    static File dir = Environment.getExternalStoragePublicDirectory(
+            Environment.DIRECTORY_PICTURES);
+
+    public static Bitmap loadImage(String imageFileName){
         if(imageFileName==null||imageFileName.isEmpty())
             return null;
         Bitmap bitmap = null;
         try {
-            File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
             File imageFile = new File(dir,imageFileName);
             InputStream inputStream = new FileInputStream(imageFile);
             bitmap = BitmapFactory.decodeStream(inputStream);
             Log.d("tag","got image from cache: " + imageFileName);
         } catch (FileNotFoundException e) {
-return null;
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return bitmap;
     }
 
-    public static void saveImageToFile(Bitmap imageBitmap, String imageFileName){
+    public static void storeImage(Bitmap imageBitmap, String imageFileName){
         try {
-            File dir = Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_PICTURES);
             if (!dir.exists()) {
                 dir.mkdir();
             }
@@ -54,7 +50,6 @@ return null;
             OutputStream out = new FileOutputStream(imageFile);
             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.close();
-            addPicureToGallery(imageFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -62,20 +57,13 @@ return null;
         }
     }
 
-    private static void addPicureToGallery(File imageFile){
-        //add the picture to the gallery so we dont need to manage the cache size
-        Intent mediaScanIntent = new
-                Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        Uri contentUri = Uri.fromFile(imageFile);
-        mediaScanIntent.setData(contentUri);
-        MyApplication.getMyContext().sendBroadcast(mediaScanIntent);
-    }
-
-
     public static void deleteImage(String fileName) {
-            File dir = Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_PICTURES);
             File imageFile = new File(dir,fileName);
             imageFile.delete();
+    }
+
+    public static boolean isExists(String filename){
+        File f = new File(dir,filename);
+        return (f.exists() && !f.isDirectory());
     }
 }

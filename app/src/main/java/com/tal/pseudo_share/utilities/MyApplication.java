@@ -1,4 +1,4 @@
-package com.tal.pseudo_share.model.utils;
+package com.tal.pseudo_share.utilities;
 
 import android.app.Application;
 import android.content.Context;
@@ -17,19 +17,6 @@ public class MyApplication extends Application {
         super.onCreate();
         context = getApplicationContext();
     }
-
-
-
-    public static void updateLastUpdate(long lastUpdated){
-        SharedPreferences.Editor editor = context.getSharedPreferences("TAG", MODE_PRIVATE).edit();
-        editor.putLong("lastUpdateDate", lastUpdated);
-        editor.commit();
-    }
-
-    public static long getLastUpdate(){
-        return context.getSharedPreferences("TAG", MODE_PRIVATE).getLong("lastUpdateDate", 0);
-    }
-
     public static Context getMyContext(){
         return context;
     }

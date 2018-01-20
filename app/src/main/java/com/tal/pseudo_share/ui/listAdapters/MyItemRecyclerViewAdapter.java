@@ -1,25 +1,27 @@
 package com.tal.pseudo_share.ui.listAdapters;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.tal.pseudo_share.R;
-import com.tal.pseudo_share.model.utils.DateConverter;
+import com.tal.pseudo_share.data.DateConverter;
 import com.tal.pseudo_share.data.Pseudo;
+import com.tal.pseudo_share.data.PseudoType;
 
+import java.util.Date;
 import java.util.List;
 
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder>{
 
-    private final MutableLiveData<List<Pseudo>> mValues;
+    private final LiveData<List<Pseudo>> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyItemRecyclerViewAdapter(MutableLiveData<List<Pseudo>> items, OnListFragmentInteractionListener listener) {
+    public MyItemRecyclerViewAdapter(LiveData<List<Pseudo>> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -54,8 +56,6 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         return mValues.getValue().size();
     }
 
-
-
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView name;
@@ -77,8 +77,8 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             this.mItem = item;
             name.setText(item.getName());
             author.setText(item.getAuthor());
-            type.setText(item.getType());
-            date.setText(DateConverter.onlyDate(DateConverter.toDate(item.getDate())));
+            type.setText(PseudoType.toString(item.getType()));
+            date.setText(DateConverter.onlyDate(new Date(item.getDate())));
         }
     }
     public interface OnListFragmentInteractionListener {

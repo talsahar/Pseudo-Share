@@ -29,20 +29,16 @@
 
         </android.support.constraint.ConstraintLayout>
 
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="@style/Widget.AppCompat.ProgressBar"
+        <include layout="@layout/myprogressbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_gravity="center|top"
             android:layout_marginBottom="15dp"
             android:layout_marginTop="120dp"
-            android:indeterminate="true"
-            android:indeterminateTint="#ffffff"
-            android:indeterminateTintMode="src_atop"
-            android:visibility="invisible" />
+            />
+
+
 
     </FrameLayout>
 </LinearLayout>

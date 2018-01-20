@@ -1,5 +1,6 @@
 package com.tal.pseudo_share.ui.login;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -16,15 +17,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.ui.main.MainActivity;
 import com.tal.pseudo_share.viewmodel.AuthenticationViewModel;
+import com.tal.pseudo_share.viewmodel.StaticMutablesHolder;
 
 import java.util.concurrent.Future;
 
 
 public class LoginActivity extends AppCompatActivity {
-    EditText userField;
-    EditText passField;
-    EditText nickField;
-    ProgressBar progressBar;
     AuthenticationViewModel viewModel;
 
     @Override
@@ -32,87 +30,48 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        viewModel= ViewModelProviders.of(this).get(AuthenticationViewModel.class);
-        viewModel.getExceptionLiveData().observe(this, new Observer<Exception>() {
-            @Override
-            public void onChanged(@Nullable Exception e) {
-                toast(e.getMessage());
-                progressBar.setVisibility(View.INVISIBLE);
-            }
-        });
+        final EditText userField = findViewById(R.id.userField);
+        final EditText passField = findViewById(R.id.passField);
+        final EditText nickField = findViewById(R.id.nickname);
+        StaticMutablesHolder.bindProgressBar(this, (ProgressBar) findViewById(R.id.progressBar));
+        Button signupButton = findViewById(R.id.signupButton);
+        Button loginButton = findViewById(R.id.loginButton);
 
+        viewModel = ViewModelProviders.of(this).get(AuthenticationViewModel.class);
 
-        viewModel.getUserLiveData().observe(this, new Observer<FirebaseUser>() {
+        StaticMutablesHolder.bindException(this);
+
+        final LiveData<FirebaseUser> userLiveData = viewModel.getUserLiveData();
+        userLiveData.observe(this, new Observer<FirebaseUser>() {
             @Override
             public void onChanged(@Nullable FirebaseUser firebaseUser) {
-                progressBar.setVisibility(View.INVISIBLE);
-                if(firebaseUser!=null){
-                    toast("Welcome to Pseudo-Share");
-                    loadMainActivity();
+                if (firebaseUser != null) {
+                    Toast.makeText(LoginActivity.this, "Welcome to Pseudo-Share", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
                 }
             }
         });
 
-        viewModel.loadCurrUser();
-
-        userField = findViewById(R.id.userField);
-        passField = findViewById(R.id.passField);
-        nickField = findViewById(R.id.nickname);
-        progressBar = findViewById(R.id.progressBar);
-        Button signupButton = findViewById(R.id.signupButton);
-        Button loginButton = findViewById(R.id.loginButton);
 
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
-                String user, pass, nick;
-                if ((user = fieldAsString(userField)).isEmpty())
-                    toast("Error: email field is empty.");
-                else if ((pass = fieldAsString(passField)).isEmpty())
-                    toast("Error: password field is empty.");
-                else if ((nick = fieldAsString(nickField)).isEmpty())
-                    toast("Error: nickname field is empty.");
-                else
-                {
-                    viewModel.signup(user,pass, nick);
-                    return;
-                }
-                progressBar.setVisibility(View.INVISIBLE);
+                String user = userField.getText().toString();
+                String pass = passField.getText().toString();
+                String nick = nickField.getText().toString();
+                viewModel.signup(user, pass, nick);
             }
         });
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
-                String user, pass;
-                if ((user = fieldAsString(userField)).isEmpty())
-                    toast("Error: email field is empty.");
-                else if ((pass = fieldAsString(passField)).isEmpty())
-                    toast("Error: password field is empty.");
-                else
-                {
-                    viewModel.signin(user,pass);
-                return;
-                }
-                progressBar.setVisibility(View.INVISIBLE);
+                String user = userField.getText().toString();
+                String pass = passField.getText().toString();
+                viewModel.signin(user, pass);
             }
         });
     }
 
-    private String fieldAsString(EditText field) {
-        return field.getText().toString();
-    }
-
-    private void loadMainActivity(){
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-
-    }
-
-    private void toast(String msg){
-        Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_LONG).show();
-
-    }
 
 }

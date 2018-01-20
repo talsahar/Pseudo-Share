@@ -6,7 +6,7 @@ android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/createbackground"
-    tools:context="com.tal.pseudo_share.ui.creation.CreatePseudoActivity">
+    >
     <include
         android:id="@+id/include"
         layout="@layout/title_toolbar"
@@ -16,18 +16,15 @@ android:orientation="vertical"
 <FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <ProgressBar
-        android:id="@+id/progressBar"
+    <include layout="@layout/myprogressbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="invisible"
-        android:indeterminate="true"
-        android:indeterminateTintMode="src_atop"
-        android:indeterminateTint="@color/colorPrimary"
         android:layout_gravity="center|bottom"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="15dp"/>
+        android:layout_marginBottom="15dp"
+        />
+
+
 
     <android.support.constraint.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

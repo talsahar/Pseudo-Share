@@ -18,6 +18,7 @@ import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.data.Pseudo;
 import com.tal.pseudo_share.ui.creation.CreateFragmentOne;
 import com.tal.pseudo_share.viewmodel.DetailsViewModel;
+import com.tal.pseudo_share.viewmodel.StaticMutablesHolder;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -30,19 +31,10 @@ public class DetailsActivity extends AppCompatActivity {
         toolbar.setTitle("Pseudo Details");
         setSupportActionBar(toolbar);
 
-        Intent intent = getIntent();
-        String itemId = intent.getStringExtra("id");
-        detailsViewModel= ViewModelProviders.of(this).get(DetailsViewModel.class);
-        detailsViewModel.getProgressBarStatusMutableData().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(@Nullable Boolean aBoolean) {
-                ProgressBar progressBar=findViewById(R.id.progressBar);
-                if(aBoolean)
-                progressBar.setVisibility(View.VISIBLE);
-                else
-                    progressBar.setVisibility(View.INVISIBLE);
-            }
-        });
+       final ProgressBar progressBar=findViewById(R.id.progressBar);
+
+        StaticMutablesHolder.bindProgressBar(this, (ProgressBar) findViewById(R.id.progressBar));
+
         Fragment newFragment = new DetailsFragmentOne();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.contentContainer, newFragment);
@@ -52,7 +44,6 @@ public class DetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.create_menu, menu);
         return true;
     }

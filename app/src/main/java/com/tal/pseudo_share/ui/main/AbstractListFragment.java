@@ -1,5 +1,6 @@
 package com.tal.pseudo_share.ui.main;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -16,15 +17,15 @@ import android.view.ViewGroup;
 import com.tal.pseudo_share.ui.listAdapters.MyItemRecyclerViewAdapter;
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.data.Pseudo;
-import com.tal.pseudo_share.viewmodel.MyPseudoViewModel;
+import com.tal.pseudo_share.viewmodel.AllPseudoViewModel;
 
 import java.util.List;
 
 
 abstract class AbstractListFragment extends Fragment implements MyItemRecyclerViewAdapter.OnListFragmentInteractionListener {
-    protected MyPseudoViewModel myPseudoViewModel;
+    protected AllPseudoViewModel allPseudoViewModel;
     protected MyItemRecyclerViewAdapter adapter;
-    protected MutableLiveData<List<Pseudo>> data;
+    protected LiveData<List<Pseudo>> data;
 
     public AbstractListFragment() {
     }
@@ -32,7 +33,7 @@ abstract class AbstractListFragment extends Fragment implements MyItemRecyclerVi
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        myPseudoViewModel=ViewModelProviders.of(getActivity()).get(MyPseudoViewModel.class);
+        allPseudoViewModel = ViewModelProviders.of(getActivity()).get(AllPseudoViewModel.class);
     }
 
     @Override
@@ -41,20 +42,18 @@ abstract class AbstractListFragment extends Fragment implements MyItemRecyclerVi
         RecyclerView view = (RecyclerView) inflater.inflate(R.layout.fragment_item_list, container, false);
         Context context = view.getContext();
         view.setLayoutManager(new LinearLayoutManager(context));
-        adapter=new MyItemRecyclerViewAdapter(data,this);
+        adapter = new MyItemRecyclerViewAdapter(data, this);
         view.setAdapter(adapter);
         return view;
     }
 
 
-    public  void observeData(){
-        data.observe(this,new Observer<List<Pseudo>>() {
+    public void observeData() {
+        data.observe(this, new Observer<List<Pseudo>>() {
             @Override
             public void onChanged(@Nullable List<Pseudo> pseudos) {
                 adapter.notifyDataSetChanged();
-                if(pseudos.size()>0){
-                    myPseudoViewModel.setProgressBarStatus(false);
-                }            }
+            }
         });
     }
 }

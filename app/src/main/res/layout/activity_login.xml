@@ -35,55 +35,26 @@
             android:layout_height="wrap_content"
             android:background="@drawable/login_handler_background"
             android:orientation="vertical"
-            android:paddingBottom="20dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="20dp">
+            android:paddingVertical="20dp"
+            android:paddingHorizontal="10dp">
 
-            <com.rengwuxian.materialedittext.MaterialEditText
+            <include
                 android:id="@+id/userField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:drawableLeft="@drawable/usericon"
-                android:drawablePadding="12dp"
-                android:hint="Email"
-                android:inputType="textEmailAddress"
-                app:met_baseColor="#ffffff"
-                app:met_primaryColor="#ffffff"
-                app:met_errorColor="#dd0000"
-                app:met_singleLineEllipsis="true"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                android:imeOptions="actionDone"
-                />
+                layout="@layout/login_material_edit_text" />
 
-
-
-            <com.rengwuxian.materialedittext.MaterialEditText
+            <include
                 android:id="@+id/passField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
                 android:drawableLeft="@drawable/passicon"
-                app:met_baseColor="#ffffff"
-                app:met_primaryColor="#ffffff"
-                app:met_errorColor="#dd0000"
-                app:met_singleLineEllipsis="true"
-                android:drawablePadding="12dp"
                 android:hint="........."
                 android:inputType="textPassword"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                android:imeOptions="actionDone"/>
-
+                layout="@layout/login_material_edit_text"
+                />
 
             <Button
                 android:id="@+id/loginButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/login_button"
-                android:clickable="true"
                 android:text="Log In"
                 android:textAllCaps="false"
                 android:textColor="#ffffff" />
@@ -99,23 +70,13 @@
                 android:textSize="17dp"
                 android:textStyle="bold"/>
 
-            <com.rengwuxian.materialedittext.MaterialEditText
+
+            <include
                 android:id="@+id/nickname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
                 android:drawableLeft="@drawable/nickicon"
-                android:drawablePadding="12dp"
-                app:met_baseColor="#ffffff"
-                app:met_primaryColor="#ffffff"
-                app:met_errorColor="#dd0000"
-                app:met_singleLineEllipsis="true"
                 android:hint="Nickname"
-                android:inputType="textEmailAddress"
-                android:textColorHint="#ffffff"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                android:imeOptions="actionDone"/>
+                layout="@layout/login_material_edit_text"
+                />
 
 
             <Button
@@ -123,20 +84,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/signup_button"
-                android:clickable="true"
                 android:text="Sign Up"
                 android:textAllCaps="false"
                 android:textColor="#ffffff" />
 
         </LinearLayout>
     </LinearLayout>
-
-   <ProgressBar
-       android:id="@+id/progressBar"
+    <include layout="@layout/myprogressbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-       android:visibility="invisible"
         android:layout_gravity="center|bottom"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="15dp"/>
+        android:layout_marginBottom="15dp"
+        />
 </FrameLayout>
