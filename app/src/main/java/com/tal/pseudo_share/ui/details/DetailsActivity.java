@@ -16,52 +16,49 @@ import android.widget.ProgressBar;
 
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.data.Pseudo;
+import com.tal.pseudo_share.ui.BaseActivity;
 import com.tal.pseudo_share.ui.creation.CreateFragmentOne;
 import com.tal.pseudo_share.viewmodel.DetailsViewModel;
 import com.tal.pseudo_share.viewmodel.StaticMutablesHolder;
 
-public class DetailsActivity extends AppCompatActivity {
+import java.util.HashMap;
 
-    DetailsViewModel detailsViewModel;
+public class DetailsActivity extends BaseActivity {
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
+    public void setContentView() {
         setContentView(R.layout.activity_details);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+
+    }
+
+    @Override
+    public Toolbar getToolbar() {
+        Toolbar toolbar=findViewById(R.id.toolbar);
         toolbar.setTitle("Pseudo Details");
-        setSupportActionBar(toolbar);
+        return toolbar;
+    }
 
-       final ProgressBar progressBar=findViewById(R.id.progressBar);
 
-        StaticMutablesHolder.bindProgressBar(this, (ProgressBar) findViewById(R.id.progressBar));
-
-        Fragment newFragment = new DetailsFragmentOne();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.contentContainer, newFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+    @Override
+    public ProgressBar loadProgressBar() {
+        return findViewById(R.id.progressBar);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.create_menu, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_cancel:
-            onBackPressed();
-        }
-        return true;
+    public int getOnBackFragmentId() {
+        return R.id.contentContainer;
     }
 
     @Override
-    public void onBackPressed() {
-        final Fragment fragment = (Fragment) getSupportFragmentManager().findFragmentById(R.id.contentContainer);
-        if (fragment.getClass() == DetailsFragmentOne.class)
-            finish();
-        else super.onBackPressed();
+    public  HashMap<Integer, Fragment> getInitialFragments() {
+        HashMap<Integer,Fragment> map=new HashMap<>();
+        map.put(R.id.contentContainer, new DetailsFragmentOne());
+        return map;
     }
-
 }

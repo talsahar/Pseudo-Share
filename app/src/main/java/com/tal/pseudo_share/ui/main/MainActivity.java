@@ -21,18 +21,19 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.tal.pseudo_share.R;
-import com.tal.pseudo_share.model.ProgressStatusHolder;
+import com.tal.pseudo_share.ui.BaseActivity;
 import com.tal.pseudo_share.ui.creation.CreatePseudoActivity;
 import com.tal.pseudo_share.viewmodel.AllPseudoViewModel;
 import com.tal.pseudo_share.viewmodel.AuthenticationViewModel;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.HashMap;
+
+public class MainActivity extends BaseActivity {
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         ViewPager mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -47,18 +48,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        AllPseudoViewModel allPseudoViewModel = ViewModelProviders.of(this).get(AllPseudoViewModel.class);
-        ProgressStatusHolder.bind(this, (ProgressBar) findViewById(R.id.progressBar));
-
-
-        allPseudoViewModel.getException().observe(this, new Observer<Exception>() {
-            @Override
-            public void onChanged(@Nullable Exception e) {
-                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT);
-            }
-        });
-
     }
 
 
@@ -80,32 +69,63 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public Toolbar getToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("Pseudo-Share");
+        return toolbar;
+    }
+
+    @Override
+    public void setContentView() {
+        setContentView(R.layout.activity_main);
+    }
+
+
+    @Override
+    public ProgressBar loadProgressBar() {
+        return findViewById(R.id.progressBar);
+    }
+
+    @Override
+    public int getOnBackFragmentId() {
+        return 0;
+    }
+
+    @Override
+    public HashMap<Integer, Fragment> getInitialFragments() {
+        return null;
+    }
 }
 
 class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+    HashMap<Integer, Fragment> fragmentHashMap;
+
     public SectionsPagerAdapter(FragmentManager fm) {
         super(fm);
+        fragmentHashMap = new HashMap<>();
+        fragmentHashMap.put(0, new MyPseudoFragment());
+        fragmentHashMap.put(1, new OnlinePseudoFragment());
+        fragmentHashMap.put(2, new AboutFragment());
+
     }
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                return new MyPseudoFragment();
-            case 1:
-                return new OnlinePseudoFragment();
-            case 2:
-                return new AboutFragment();
-            default:
-                throw new RuntimeException("Error loading fragment please check your SectionsPagerAdapter");
-        }
+
+        Fragment fragment = fragmentHashMap.get(position);
+        if (fragment == null)
+            throw new RuntimeException("Error loading fragment please check your SectionsPagerAdapter");
+        return fragment;
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return fragmentHashMap.size();
     }
+
 }
 
 

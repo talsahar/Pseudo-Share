@@ -1,7 +1,6 @@
-package com.tal.pseudo_share.ui.listAdapters;
+package com.tal.pseudo_share.ui.main;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,8 +82,6 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     }
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(Pseudo item);
-        void onLongClickInteraction(Pseudo item);
-
     }
 
 

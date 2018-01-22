@@ -1,5 +1,6 @@
 package com.tal.pseudo_share.ui.main;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,11 +20,8 @@ import java.util.List;
 public class OnlinePseudoFragment extends AbstractListFragment {
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        data = allPseudoViewModel.getAllPseudos();
-        super.observeData();
-
+    public LiveData<List<Pseudo>> loadData() {
+        return allPseudoViewModel.getAllPseudos();
     }
 
     @Override
@@ -33,9 +31,6 @@ public class OnlinePseudoFragment extends AbstractListFragment {
                 startActivity(intent);
             }
 
-    @Override
-    public void onLongClickInteraction(Pseudo item) {
 
-    }
 
 }

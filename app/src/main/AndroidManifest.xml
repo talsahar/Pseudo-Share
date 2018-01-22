@@ -4,12 +4,13 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".utilities.MyApplication"
@@ -29,7 +30,6 @@
         </activity>
         <activity android:name=".ui.creation.CreatePseudoActivity" />
         <activity android:name=".ui.details.DetailsActivity" />
-        <activity android:name=".ui.edit.EditActivity"></activity>
     </application>
 
 </manifest>

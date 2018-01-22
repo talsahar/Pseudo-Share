@@ -36,6 +36,7 @@ public class CreatePseudoViewModel extends ViewModel {
         return builder;
     }
 
+
     //called when you done building your pseudo. it will store it on storage.
     public void updateLiveData() {
         final Pseudo readyPseudo = builder.build();

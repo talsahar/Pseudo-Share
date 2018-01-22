@@ -33,8 +33,11 @@ public class ImageStorageManager {
     }
 
     public void loadImage(final String path, final Callback<Bitmap> onComplete,final Callback<Exception> onFailed) {
-       if(path==null||path.isEmpty())
+       if(path==null||path.isEmpty()){
            onComplete.call(null);
+           return;
+       }
+
         final String fname=uriToFileName(path);
         if(ImageLocalStorage.isExists(fname))
             onComplete.call(ImageLocalStorage.loadImage(fname));

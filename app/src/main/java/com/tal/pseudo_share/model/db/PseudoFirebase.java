@@ -29,7 +29,6 @@ public class PseudoFirebase {
 
 
     public void getAllPseudosAndObserve(@Nullable Long lastUpdate, final Callback<List<Pseudo>> callback) {
-        Log.d("TAG", "getAllPseudoAndObserve from firebase");
         Query query = FirebaseDatabase.getInstance().getReference("pseudos");
         query = query.orderByChild("lastUpdate").startAt(lastUpdate);
 

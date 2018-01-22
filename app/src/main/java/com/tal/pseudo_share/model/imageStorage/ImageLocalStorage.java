@@ -5,6 +5,8 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
+import com.tal.pseudo_share.utilities.StoragePermission;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,8 +22,7 @@ import java.io.OutputStream;
 public class ImageLocalStorage {
 
 
-    static File dir = Environment.getExternalStoragePublicDirectory(
-            Environment.DIRECTORY_PICTURES);
+
 
     public static Bitmap loadImage(String imageFileName){
         if(imageFileName==null||imageFileName.isEmpty())
@@ -39,9 +40,11 @@ public class ImageLocalStorage {
         }
         return bitmap;
     }
-
+    static File dir = Environment.getExternalStoragePublicDirectory(
+            Environment.DIRECTORY_PICTURES);
     public static void storeImage(Bitmap imageBitmap, String imageFileName){
         try {
+
             if (!dir.exists()) {
                 dir.mkdir();
             }

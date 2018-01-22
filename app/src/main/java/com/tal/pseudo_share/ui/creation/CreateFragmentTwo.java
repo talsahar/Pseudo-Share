@@ -1,7 +1,9 @@
 package com.tal.pseudo_share.ui.creation;
 
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,7 +16,9 @@ import android.widget.Toast;
 
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.data.DateConverter;
+import com.tal.pseudo_share.data.Pseudo;
 import com.tal.pseudo_share.viewmodel.CreatePseudoViewModel;
+import com.tal.pseudo_share.viewmodel.DetailsViewModel;
 import com.webianks.library.PopupBubble;
 
 import java.util.Date;
@@ -38,6 +42,14 @@ CreatePseudoViewModel viewModel;
                              Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_create_fragment_two, container, false);
         code=view.findViewById(R.id.code);
+
+        String id=null;//the following block will called on edition
+        if((id=getActivity().getIntent().getStringExtra("id"))!=null){
+            DetailsViewModel detailsViewModel = ViewModelProviders.of(getActivity()).get(DetailsViewModel.class);
+            Pseudo editPseudo=detailsViewModel.getPseudoLivedata(id).getValue();
+            code.setText(editPseudo.getContent());
+        }
+
         Button button=view.findViewById(R.id.DoneCreationButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override

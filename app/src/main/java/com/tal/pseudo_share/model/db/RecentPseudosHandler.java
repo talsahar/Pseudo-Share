@@ -20,12 +20,12 @@ import java.util.concurrent.Semaphore;
  * Created by User on 18/01/2018.
  */
 
-public class NewPseudosHandler extends AsyncTask<List<Pseudo>, String, Set<Pseudo>> {
+public class RecentPseudosHandler extends AsyncTask<List<Pseudo>, String, Set<Pseudo>> {
 
     private final Runnable onComplete;
     Semaphore semaphore;
     PseudoListLiveData pseudoListLiveData;
-    public NewPseudosHandler(Semaphore semaphore, PseudoListLiveData pseudoListLiveData,Runnable onComplete){
+    public RecentPseudosHandler(Semaphore semaphore, PseudoListLiveData pseudoListLiveData,Runnable onComplete){
         this.semaphore=semaphore;
         this.pseudoListLiveData=pseudoListLiveData;
         this.onComplete=onComplete;

@@ -25,8 +25,6 @@ public interface PseudoDao{
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Pseudo... pseudos);
 
-    @Update
-    public void update(Pseudo... pseudos);
 
     @Delete
     public void delete(Pseudo... users);

@@ -18,7 +18,7 @@ public enum Difficulty {
         }
 
         @TypeConverter
-        public static String toTimeStamp(Difficulty difficulty) {
+        public static String toString(Difficulty difficulty) {
             return difficulty == null ? null : difficulty.name();
         }
 

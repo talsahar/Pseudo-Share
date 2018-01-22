@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 @Entity
 @TypeConverters({DateConverter.class, Difficulty.class, PseudoType.class})
-public class Pseudo{
+public class Pseudo {
     @PrimaryKey
     @NonNull
     public String id;
@@ -36,6 +36,14 @@ public class Pseudo{
     public static PseudoBuilder builder(String id) {
         return new PseudoBuilder(id);
     }
+
+    public PseudoBuilder builderFromThis() {
+        PseudoBuilder builder = new PseudoBuilder(id);
+        builder.setAuthor(author).setDate(DateConverter.toDate(date)).setName(name).setDifficulty(difficulty).setPseudoType(type).setDescription(description).setImageurl(imageUrl)
+                .setContent(content).setDeleted(isDeleted).setLastupdate(lastUpdate);
+        return builder;
+    }
+
 
     public HashMap<String, Object> toJson() {
         HashMap<String, Object> result = new HashMap<>();
@@ -70,7 +78,7 @@ public class Pseudo{
         Pseudo pseudo;
 
         public PseudoBuilder(String id) {
-          pseudo=new Pseudo();
+            pseudo = new Pseudo();
             pseudo.setId(id);
         }
 
@@ -131,6 +139,10 @@ public class Pseudo{
 
         public String getId() {
             return pseudo.getId();
+        }
+
+        public void setId(String id) {
+            pseudo.id = id;
         }
     }
 

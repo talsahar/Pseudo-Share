@@ -1,7 +1,6 @@
 package com.tal.pseudo_share.ui.main;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -14,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tal.pseudo_share.ui.listAdapters.MyItemRecyclerViewAdapter;
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.data.Pseudo;
 import com.tal.pseudo_share.viewmodel.AllPseudoViewModel;
@@ -22,7 +20,7 @@ import com.tal.pseudo_share.viewmodel.AllPseudoViewModel;
 import java.util.List;
 
 
-abstract class AbstractListFragment extends Fragment implements MyItemRecyclerViewAdapter.OnListFragmentInteractionListener {
+abstract class AbstractListFragment extends Fragment implements MyItemRecyclerViewAdapter.OnListFragmentInteractionListener,DataLoader {
     protected AllPseudoViewModel allPseudoViewModel;
     protected MyItemRecyclerViewAdapter adapter;
     protected LiveData<List<Pseudo>> data;
@@ -30,10 +28,20 @@ abstract class AbstractListFragment extends Fragment implements MyItemRecyclerVi
     public AbstractListFragment() {
     }
 
+    //should be implemented in derived class
+    public abstract LiveData<List<Pseudo>> loadData();
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         allPseudoViewModel = ViewModelProviders.of(getActivity()).get(AllPseudoViewModel.class);
+        data=loadData();
+        data.observe(this, new Observer<List<Pseudo>>() {
+            @Override
+            public void onChanged(@Nullable List<Pseudo> pseudos) {
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -47,13 +55,8 @@ abstract class AbstractListFragment extends Fragment implements MyItemRecyclerVi
         return view;
     }
 
+}
 
-    public void observeData() {
-        data.observe(this, new Observer<List<Pseudo>>() {
-            @Override
-            public void onChanged(@Nullable List<Pseudo> pseudos) {
-                adapter.notifyDataSetChanged();
-            }
-        });
-    }
+interface DataLoader{
+LiveData<List<Pseudo>> loadData();
 }

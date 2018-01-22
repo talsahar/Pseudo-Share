@@ -33,7 +33,8 @@ public class PseudoRepository {
     }
 
     private PseudoRepository() {
-        semaphore = new Semaphore(1);
+        semQuery = new Semaphore(1);
+        semTask=new Semaphore(1);
         exceptionCallback = new Callback<Exception>() {
             @Override
             public void call(Exception exception) {
@@ -79,22 +80,30 @@ public class PseudoRepository {
         return null;
     }
 
-    private Semaphore semaphore;
+    private Semaphore semQuery,semTask;
 
     public LiveData<List<Pseudo>> getAllPseudos() {
         StaticMutablesHolder.progressStatus.setValue(true);
         long lastUpdateDate = MyStorage.getLastUpdate();
-        MyStorage.firebaseDb.getAllPseudosAndObserve(lastUpdateDate, new Callback<List<Pseudo>>() {
-            @Override
-            public void call(List<Pseudo> data) {
-                new NewPseudosHandler(semaphore, pseudoListLiveData, new Runnable() {
-                    @Override
-                    public void run() {
-                        StaticMutablesHolder.progressStatus.setValue(false);
-                    }
-                }).execute(data);
-            }
-        });
+
+        boolean hasLocked=semQuery.tryAcquire();
+        if(hasLocked){
+            MyStorage.firebaseDb.getAllPseudosAndObserve(lastUpdateDate, new Callback<List<Pseudo>>() {
+                @Override
+                public void call(List<Pseudo> data) {
+                    new RecentPseudosHandler(semTask, pseudoListLiveData, new Runnable() {
+                        @Override
+                        public void run() {
+                            StaticMutablesHolder.progressStatus.setValue(false);
+                        }
+                    }).execute(data);
+                }
+            });
+        }
+        else{
+            StaticMutablesHolder.exceptionMutableLiveData.setValue(new Exception("You are blocked on get all pseudos"));
+        }
+
         return pseudoListLiveData;
     }
 
@@ -113,7 +122,6 @@ public class PseudoRepository {
             public void call(Exception data) {
                 drawableMutableLiveData.setValue(null);
                 exceptionCallback.call(data);
-                StaticMutablesHolder.progressStatus.setValue(false);
             }
         });
         return drawableMutableLiveData;
