@@ -2,15 +2,14 @@ package com.tal.pseudo_share.data;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverter;
 import android.arch.persistence.room.TypeConverters;
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
 import com.google.firebase.database.ServerValue;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by User on 15/12/2017.
@@ -238,5 +237,18 @@ public class Pseudo {
     public void setLastUpdate(long lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
+    public static class PseudoSorter {
+        public static void sortbyDate(List<Pseudo> list){
+            for(int i=0;i<list.size()-1;i++)
+                for(int j=i+1;j<list.size();j++)
+                    if(list.get(i).getLastUpdate()>list.get(j).getLastUpdate())
+                    {
+                        Pseudo tmp=list.get(i);
+                        list.set(i,list.get(j));
+                        list.set(j,tmp);
+                    }
+        }
 
+    }
 }
+

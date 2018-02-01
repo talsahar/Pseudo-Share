@@ -20,7 +20,7 @@ import com.tal.pseudo_share.viewmodel.AllPseudoViewModel;
 import java.util.List;
 
 
-abstract class AbstractListFragment extends Fragment implements MyItemRecyclerViewAdapter.OnListFragmentInteractionListener,DataLoader {
+public abstract class AbstractListFragment extends Fragment implements MyItemRecyclerViewAdapter.OnListFragmentInteractionListener,DataLoader {
     protected AllPseudoViewModel allPseudoViewModel;
     protected MyItemRecyclerViewAdapter adapter;
     protected LiveData<List<Pseudo>> data;

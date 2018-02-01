@@ -26,10 +26,23 @@ import java.util.List;
 
 public class PseudoFirebase {
 
+    Query query;
 
+    public void reset() {
+        if(query!=null)
+            query.removeEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+    }
 
     public void getAllPseudosAndObserve(@Nullable Long lastUpdate, final Callback<List<Pseudo>> callback) {
-        Query query = FirebaseDatabase.getInstance().getReference("pseudos");
+        query = FirebaseDatabase.getInstance().getReference("pseudos");
         query = query.orderByChild("lastUpdate").startAt(lastUpdate);
 
         query.addValueEventListener(new ValueEventListener() {
@@ -71,4 +84,6 @@ public class PseudoFirebase {
             }
         });
     }
+
+
 }

@@ -39,7 +39,7 @@
             android:layout_marginStart="8dp"
             android:background="@drawable/login_handler_background"
             android:text="Done"
-            android:textSize="17dp"
+            android:textSize="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/fontSizePicker"
             app:layout_constraintStart_toEndOf="@+id/fontColorPicker" />

@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -40,6 +41,8 @@ import com.tal.pseudo_share.viewmodel.CreatePseudoViewModel;
 import com.tal.pseudo_share.viewmodel.DetailsViewModel;
 import com.tal.pseudo_share.viewmodel.StaticMutablesHolder;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Arrays;
 
@@ -74,10 +77,10 @@ public class CreateFragmentOne extends Fragment {
         typePicker = view.findViewById(R.id.typePicker);
         picture = view.findViewById(R.id.pseudoImage);
 
-        String id=null;//the following block will called on edition
-        if((id=getActivity().getIntent().getStringExtra("id"))!=null){
+        String id = null;//the following block will called on edition
+        if ((id = getActivity().getIntent().getStringExtra("id")) != null) {
             DetailsViewModel detailsViewModel = ViewModelProviders.of(getActivity()).get(DetailsViewModel.class);
-            Pseudo editPseudo=detailsViewModel.getPseudoLivedata(id).getValue();
+            Pseudo editPseudo = detailsViewModel.getPseudoLivedata(id).getValue();
             description.setText(editPseudo.getDescription());
             title.setText(editPseudo.getName());
             difficultyPicker.setText(editPseudo.getDifficulty().name());
@@ -112,9 +115,16 @@ public class CreateFragmentOne extends Fragment {
                             if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                                 startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                             }
-                        }
-                        else if(which == 1){
-                            //load from gallery.
+                        } else if (which == 1) {
+                            Intent intent = new Intent(
+                                    Intent.ACTION_PICK);
+                            File pictureDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                            String path = pictureDirectory.getPath();
+                            Uri data = Uri.parse(path);
+                            intent.setDataAndType(data, "image/*");
+                            startActivityForResult(intent, IMAGE_GALLERY_REQUEST);
+
+
                         }
                     }
                 }).show(getActivity().getFragmentManager(),
@@ -151,18 +161,33 @@ public class CreateFragmentOne extends Fragment {
         });
         return view;
     }
+
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int IMAGE_GALLERY_REQUEST = 2;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE &&
-                resultCode == Activity.RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            picture.setImageBitmap(imageBitmap);
-            viewModel.setImageBitmap(imageBitmap);
+
+        if (resultCode == Activity.RESULT_OK) {
+            Bitmap bitmap = null;
+            if (requestCode == REQUEST_IMAGE_CAPTURE) {
+                Bundle extras = data.getExtras();
+                bitmap = (Bitmap) extras.get("data");
+            } else if (requestCode == IMAGE_GALLERY_REQUEST) {
+                Uri imageUri = data.getData();
+                InputStream inputStream;
+                try {
+                    inputStream = getActivity().getContentResolver().openInputStream(imageUri);
+                    bitmap = BitmapFactory.decodeStream(inputStream);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), "Unable to open image", Toast.LENGTH_LONG).show();
+                }
+            }
+            if(bitmap!=null){
+                picture.setImageBitmap(bitmap);
+                viewModel.setImageBitmap(bitmap);
+            }
         }
-
-
     }
 }

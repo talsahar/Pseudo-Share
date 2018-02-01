@@ -16,16 +16,6 @@ android:orientation="vertical"
 <FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <include layout="@layout/myprogressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|bottom"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="15dp"
-        />
-
-
-
     <android.support.constraint.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/contentContainer"
@@ -34,7 +24,13 @@ android:orientation="vertical"
         android:layout_marginTop="10dp">
 
     </android.support.constraint.ConstraintLayout>
-
+    <include layout="@layout/myprogressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"
+        />
 </FrameLayout>
 
 

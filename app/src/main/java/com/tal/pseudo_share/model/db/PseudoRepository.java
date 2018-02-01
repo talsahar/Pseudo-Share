@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 
 import com.tal.pseudo_share.data.Pseudo;
 import com.tal.pseudo_share.model.AuthenticationRepository;
@@ -22,10 +23,20 @@ public class PseudoRepository {
 
     PseudoListLiveData pseudoListLiveData;
     Callback<Exception> exceptionCallback;
+    private Semaphore semQuery, semTask;
+
+
 
 
     public static class Holder {
-        static final PseudoRepository instance = new PseudoRepository();
+        static PseudoRepository instance;
+    }
+
+    //called on login to prevent preview authorized user data collisions **have to be called on after authorization**.
+    public static PseudoRepository initInstance(){
+        MyStorage.firebaseDb.reset();
+        Holder.instance=new PseudoRepository();
+        return Holder.instance;
     }
 
     public static PseudoRepository getInstance() {
@@ -34,10 +45,11 @@ public class PseudoRepository {
 
     private PseudoRepository() {
         semQuery = new Semaphore(1);
-        semTask=new Semaphore(1);
+        semTask = new Semaphore(1);
         exceptionCallback = new Callback<Exception>() {
             @Override
             public void call(Exception exception) {
+                exception.printStackTrace();
                 StaticMutablesHolder.exceptionMutableLiveData.setValue(exception);
                 StaticMutablesHolder.progressStatus.setValue(false);
             }
@@ -67,27 +79,13 @@ public class PseudoRepository {
         }, exceptionCallback);
     }
 
-    //load async and return mutableData
-    public LiveData<Pseudo> loadPseudoById(final String id) {
-        StaticMutablesHolder.progressStatus.setValue(true);
-        final MutableLiveData<Pseudo> pseudo = new MutableLiveData<>();
-        for (Pseudo p : pseudoListLiveData.getValue()) {
-            if (p.getId().equals(id)) {
-                pseudo.setValue(p);
-                return pseudo;
-            }
-        }
-        return null;
-    }
-
-    private Semaphore semQuery,semTask;
 
     public LiveData<List<Pseudo>> getAllPseudos() {
         StaticMutablesHolder.progressStatus.setValue(true);
         long lastUpdateDate = MyStorage.getLastUpdate();
 
-        boolean hasLocked=semQuery.tryAcquire();
-        if(hasLocked){
+        boolean hasLocked = semQuery.tryAcquire();
+        if (hasLocked) {
             MyStorage.firebaseDb.getAllPseudosAndObserve(lastUpdateDate, new Callback<List<Pseudo>>() {
                 @Override
                 public void call(List<Pseudo> data) {
@@ -99,8 +97,7 @@ public class PseudoRepository {
                     }).execute(data);
                 }
             });
-        }
-        else{
+        } else {
             StaticMutablesHolder.exceptionMutableLiveData.setValue(new Exception("You are blocked on get all pseudos"));
         }
 
@@ -120,19 +117,29 @@ public class PseudoRepository {
         }, new Callback<Exception>() {
             @Override
             public void call(Exception data) {
-                drawableMutableLiveData.setValue(null);
                 exceptionCallback.call(data);
             }
         });
         return drawableMutableLiveData;
     }
 
+    public LiveData<Pseudo> loadPseudoById(final String id) {
+        final MutableLiveData<Pseudo> pseudo = new MutableLiveData<>();
+        for (Pseudo p : pseudoListLiveData.getValue()) {
+            if (p.getId().equals(id)) {
+                pseudo.setValue(p);
+                return pseudo;
+            }
+        }
+        return pseudo;
+    }
+
     public void deletePseudo(final Pseudo pseudo) {
         StaticMutablesHolder.progressStatus.setValue(true);
-        if (pseudo.getImageUrl() != null && !pseudo.getImageUrl().isEmpty())
-            MyStorage.imageStorageManager.deleteImage(pseudo.getImageUrl(), true);
+        MyStorage.imageStorageManager.deleteImage(pseudo.getImageUrl(), true);
         MyStorage.database.pseudoDao().delete(pseudo);
         pseudoListLiveData.removeIfContains(pseudo);
+
 
         MyStorage.firebaseDb.deletePseudo(pseudo, new Callback<Pseudo>() {
             @Override
@@ -145,6 +152,7 @@ public class PseudoRepository {
     public LiveData<List<Pseudo>> getMyPseudos() {
         return pseudoListLiveData.getMyPseudosLiveData();
     }
+
 
 
 }

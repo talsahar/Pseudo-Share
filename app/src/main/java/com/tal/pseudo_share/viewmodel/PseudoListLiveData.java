@@ -3,6 +3,7 @@ package com.tal.pseudo_share.viewmodel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.MainThread;
+import android.util.Half;
 
 import com.tal.pseudo_share.data.Pseudo;
 
@@ -38,7 +39,7 @@ public class PseudoListLiveData extends MutableLiveData<List<Pseudo>> {
 
     @MainThread
     public static PseudoListLiveData getInstance(String userName) {
-        if (instance == null) {
+        if (instance == null||(instance!=null&&!instance.getUsername().equals(userName))) {
             instance = new PseudoListLiveData(userName);
         }
         return instance;
@@ -56,5 +57,9 @@ public class PseudoListLiveData extends MutableLiveData<List<Pseudo>> {
             myPseudosLiveData.setValue(myPseudosLiveData.getValue());
             setValue(getValue());
 
+    }
+
+    public String getUsername() {
+        return userName;
     }
 }

@@ -1,9 +1,7 @@
 package com.tal.pseudo_share.ui.main;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 
@@ -12,17 +10,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
+import com.tal.pseudo_share.ExternalActivity;
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.ui.BaseActivity;
 import com.tal.pseudo_share.ui.creation.CreatePseudoActivity;
+import com.tal.pseudo_share.ui.main.categories.CategoriesMainFragment;
 import com.tal.pseudo_share.viewmodel.AllPseudoViewModel;
 import com.tal.pseudo_share.viewmodel.AuthenticationViewModel;
 
@@ -34,6 +32,11 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+       AllPseudoViewModel viewModel=ViewModelProviders.of(this).get(AllPseudoViewModel.class);
+       viewModel.initRepository();
+
+
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         ViewPager mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -61,6 +64,10 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
+                break;
+            case R.id.action_about:
+                Intent intent = new Intent(this, ExternalActivity.class);
+                startActivity(intent);
                 break;
             case R.id.action_logout:
                 ViewModelProviders.of(this).get(AuthenticationViewModel.class).signout();
@@ -108,7 +115,7 @@ class SectionsPagerAdapter extends FragmentPagerAdapter {
         fragmentHashMap = new HashMap<>();
         fragmentHashMap.put(0, new MyPseudoFragment());
         fragmentHashMap.put(1, new OnlinePseudoFragment());
-        fragmentHashMap.put(2, new AboutFragment());
+        fragmentHashMap.put(2, new CategoriesMainFragment());
 
     }
 

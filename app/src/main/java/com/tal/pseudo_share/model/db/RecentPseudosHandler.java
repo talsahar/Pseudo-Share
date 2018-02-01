@@ -1,17 +1,11 @@
 package com.tal.pseudo_share.model.db;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
-import com.tal.pseudo_share.data.DateConverter;
 import com.tal.pseudo_share.data.Pseudo;
-import com.tal.pseudo_share.data.PseudoSorter;
-import com.tal.pseudo_share.utilities.MyApplication;
 import com.tal.pseudo_share.viewmodel.PseudoListLiveData;
 
-import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
@@ -80,7 +74,7 @@ public class RecentPseudosHandler extends AsyncTask<List<Pseudo>, String, Set<Ps
         }
 
         List<Pseudo> pseudoList = MyStorage.database.pseudoDao().selectAll();
-        PseudoSorter.sortbyDate(pseudoList);
+        Pseudo.PseudoSorter.sortbyDate(pseudoList);
         pseudoListLiveData.setValue(pseudoList);
         onComplete.run();
         semaphore.release();

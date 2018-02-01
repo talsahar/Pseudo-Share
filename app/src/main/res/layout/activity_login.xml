@@ -103,7 +103,7 @@
                 android:drawableLeft="@drawable/nickicon"
                 android:drawablePadding="12dp"
                 android:hint="Nickname"
-                android:inputType="textPassword"
+                android:inputType="textEmailAddress"
                 app:met_baseColor="#ffffff"
                 app:met_primaryColor="#ffffff"
                 app:met_errorColor="#dd0000"
@@ -121,7 +121,6 @@
                 android:text="Sign Up"
                 android:textAllCaps="false"
                 android:textColor="#ffffff" />
-
         </LinearLayout>
     </LinearLayout>
     <include layout="@layout/myprogressbar"

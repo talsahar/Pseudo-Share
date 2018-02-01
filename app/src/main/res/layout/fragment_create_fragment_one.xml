@@ -26,7 +26,7 @@
 
     <com.tal.pseudo_share.view.ListPickerEditText
         android:id="@+id/difficultyPicker"
-        android:layout_width="105dp"
+        android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:hint="Difficulty"

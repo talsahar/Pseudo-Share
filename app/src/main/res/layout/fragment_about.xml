@@ -2,13 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.tal.pseudo_share.ui.main.AboutFragment">
+    tools:context="com.tal.pseudo_share.AboutFragment">
 
-    <android.support.v7.widget.AppCompatImageView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:src="@drawable/cloud_background"
-        android:scaleType="centerCrop"/>
+
     <TextView
         android:id="@+id/aboutText"
         android:layout_width="match_parent"

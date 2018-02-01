@@ -1,9 +1,7 @@
 package com.tal.pseudo_share.ui.creation;
 
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,11 +13,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.tal.pseudo_share.R;
-import com.tal.pseudo_share.data.DateConverter;
 import com.tal.pseudo_share.data.Pseudo;
 import com.tal.pseudo_share.viewmodel.CreatePseudoViewModel;
 import com.tal.pseudo_share.viewmodel.DetailsViewModel;
-import com.webianks.library.PopupBubble;
 
 import java.util.Date;
 

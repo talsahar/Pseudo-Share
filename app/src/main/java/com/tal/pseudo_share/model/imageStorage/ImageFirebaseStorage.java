@@ -15,6 +15,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -25,7 +27,7 @@ public class ImageFirebaseStorage {
 
 
     public static void storeImage(Bitmap bitmap, String name, final OnUploadCompleteListener listener) {
-        FirebaseStorage storage=FirebaseStorage.getInstance();
+        FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference().child("images").child(name);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -46,49 +48,53 @@ public class ImageFirebaseStorage {
         });
     }
 
-    public static void loadImage(String path,final OnDownloadCompleteListener listener){
-  new AsyncTask<String, Integer, Bitmap>(){
+    public static void loadImage(final String path, final OnDownloadCompleteListener listener) {
 
-      @Override
-      protected Bitmap doInBackground(String... path0) {
-          try {
-              URL url = new URL(path0[0]);
-              return BitmapFactory.decodeStream(url.openConnection().getInputStream());
-          } catch (java.io.IOException e) {
-              e.printStackTrace();
-          }
-          return null;
-      }
+        new AsyncTask<String, Integer, Bitmap>() {
 
-      @Override
-      protected void onPostExecute(Bitmap bitmap) {
-          super.onPostExecute(bitmap);
-          if(bitmap!=null)
-          listener.onDownloadComplete(bitmap);
-          else
-              listener.onDownloadFailed(null);
+            @Override
+            protected Bitmap doInBackground(String... path0) {
+                try {
+                    URL url = new URL(path0[0]);
+                    return BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                } catch (java.io.IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
 
-      }
-  }.execute(path);
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                super.onPostExecute(bitmap);
+                if (bitmap != null)
+                    listener.onDownloadComplete(bitmap);
+                else
+                    listener.onDownloadFailed(null);
+
+            }
+        }.execute(path);
     }
 
     public static void deleteImage(String path, final OnCompleteListener onCompleteListener) {
-        FirebaseStorage storage=FirebaseStorage.getInstance();
+        FirebaseStorage storage = FirebaseStorage.getInstance();
         storage.getReference().child("images").child(path).delete().addOnCompleteListener(onCompleteListener).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d("TAG","Image file already deleted from storage.");
+                Log.d("TAG", "Image file already deleted from storage.");
             }
         });
     }
 
-    public interface OnUploadCompleteListener{
+    public interface OnUploadCompleteListener {
         void onUploadComplete(Uri result);
+
         void onUploadFailed(Exception exception);
 
     }
-    public interface OnDownloadCompleteListener{
+
+    public interface OnDownloadCompleteListener {
         void onDownloadComplete(Bitmap result);
+
         void onDownloadFailed(Exception exception);
     }
 

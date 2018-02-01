@@ -1,4 +1,4 @@
-package com.tal.pseudo_share.ui.main;
+package com.tal.pseudo_share.ui.main.categories;
 
 import android.arch.lifecycle.LiveData;
 import android.support.v7.widget.RecyclerView;
@@ -15,12 +15,12 @@ import com.tal.pseudo_share.data.PseudoType;
 import java.util.Date;
 import java.util.List;
 
-public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder>{
+public class CategoriesViewAdapter extends RecyclerView.Adapter<CategoriesViewAdapter.ViewHolder>{
 
-    private final LiveData<List<Pseudo>> mValues;
+    private final PseudoType[] mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyItemRecyclerViewAdapter(LiveData<List<Pseudo>> items, OnListFragmentInteractionListener listener) {
+    public CategoriesViewAdapter(CategoriesMainFragment listener, PseudoType... items) {
         mValues = items;
         mListener = listener;
     }
@@ -34,25 +34,18 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.setItem(mValues.getValue().get(position));
+        holder.setItem(mValues[position]);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                     mListener.onListFragmentInteraction(holder.mItem);
             }
         });
-        holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                mListener.onListFragmentInteraction(holder.mItem);
-                return true;
-            }
-        });
     }
 
     @Override
     public int getItemCount() {
-        return mValues.getValue().size();
+        return mValues.length;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -61,7 +54,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         public final TextView author;
         public final TextView type;
         public final TextView date;
-        public Pseudo mItem;
+        public PseudoType mItem;
 
         public ViewHolder(View view) {
             super(view);
@@ -72,16 +65,16 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             date=view.findViewById(R.id.date);
         }
 
-        public void setItem(Pseudo item) {
+        public void setItem(PseudoType item) {
             this.mItem = item;
-            name.setText(item.getName());
-            author.setText("By: "+item.getAuthor());
-            type.setText(PseudoType.toString(item.getType()));
-            date.setText(DateConverter.onlyDate(new Date(item.getDate())));
+            name.setText(item.name());
+            author.setText("");
+            type.setText("");
+            date.setText("");
         }
     }
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(Pseudo item);
+        void onListFragmentInteraction(PseudoType item);
     }
 
 

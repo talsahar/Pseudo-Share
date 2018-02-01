@@ -20,10 +20,6 @@ import java.io.OutputStream;
  */
 
 public class ImageLocalStorage {
-
-
-
-
     public static Bitmap loadImage(String imageFileName){
         if(imageFileName==null||imageFileName.isEmpty())
             return null;

@@ -11,7 +11,6 @@
         android:name="android.hardware.camera"
         android:required="true" />
 
-
     <application
         android:name=".utilities.MyApplication"
         android:allowBackup="true"
@@ -30,6 +29,7 @@
         </activity>
         <activity android:name=".ui.creation.CreatePseudoActivity" />
         <activity android:name=".ui.details.DetailsActivity" />
+        <activity android:name=".ExternalActivity"></activity>
     </application>
 
 </manifest>

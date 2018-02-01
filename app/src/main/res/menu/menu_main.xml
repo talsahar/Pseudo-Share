@@ -9,6 +9,11 @@
         android:title="@string/action_settings"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_about"
+        android:orderInCategory="100"
+        android:title="About"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_logout"
         android:orderInCategory="100"
         android:title="Logout"
