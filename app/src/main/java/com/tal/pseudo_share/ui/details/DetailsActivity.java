@@ -1,25 +1,12 @@
 package com.tal.pseudo_share.ui.details;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.ProgressBar;
 
 import com.tal.pseudo_share.R;
-import com.tal.pseudo_share.data.Pseudo;
 import com.tal.pseudo_share.ui.BaseActivity;
-import com.tal.pseudo_share.ui.creation.CreateFragmentOne;
-import com.tal.pseudo_share.viewmodel.DetailsViewModel;
-import com.tal.pseudo_share.viewmodel.StaticMutablesHolder;
 
 import java.util.HashMap;
 

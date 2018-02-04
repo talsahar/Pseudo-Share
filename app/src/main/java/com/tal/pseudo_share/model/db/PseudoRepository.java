@@ -4,13 +4,12 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import com.tal.pseudo_share.data.Pseudo;
 import com.tal.pseudo_share.model.AuthenticationRepository;
 import com.tal.pseudo_share.utilities.Callback;
 import com.tal.pseudo_share.viewmodel.PseudoListLiveData;
-import com.tal.pseudo_share.viewmodel.StaticMutablesHolder;
+import com.tal.pseudo_share.model.StaticMutablesHolder;
 
 import java.util.List;
 import java.util.concurrent.Semaphore;

@@ -19,19 +19,20 @@ public class ImageStorageManager {
     public static void storeImage(final Bitmap bitmap, final String name, final Callback<Uri> onComplete, final Callback<Exception> onFailed) {
         if (bitmap == null)
             onComplete.call(null);
-        else
-            ImageFirebaseStorage.storeImage(bitmap, name, new ImageFirebaseStorage.OnUploadCompleteListener() {
-                @Override
-                public void onUploadComplete(Uri result) {
-                    ImageLocalStorage.storeImage(bitmap, name);
-                    onComplete.call(result);
-                }
+        else{
+                ImageFirebaseStorage.storeImage(bitmap, name, new ImageFirebaseStorage.OnUploadCompleteListener() {
+                    @Override
+                    public void onUploadComplete(Uri result) {
+                        ImageLocalStorage.storeImage(bitmap, name);
+                        onComplete.call(result);
+                    }
 
-                @Override
-                public void onUploadFailed(Exception exception) {
-                    onFailed.call(exception);
-                }
-            });
+                    @Override
+                    public void onUploadFailed(Exception exception) {
+                        onFailed.call(exception);
+                    }
+                });
+        }
     }
 
     public static void loadImage(final String path, final Callback<Bitmap> onComplete, final Callback<Exception> onFailed) {
@@ -39,7 +40,8 @@ public class ImageStorageManager {
             onComplete.call(null);
         else {
             final String fname = uriToFileName(path);
-            if (ImageLocalStorage.isExists(fname))
+            Bitmap bitmap=null;
+            if((bitmap=ImageLocalStorage.loadImage(fname))!=null)
                 onComplete.call(ImageLocalStorage.loadImage(fname));
             else
                 ImageFirebaseStorage.loadImage(path, new ImageFirebaseStorage.OnDownloadCompleteListener() {
@@ -51,16 +53,15 @@ public class ImageStorageManager {
 
                     @Override
                     public void onDownloadFailed(Exception exception) {
-                        exception.printStackTrace();
-                        final Callback<Exception> onFailed;
+                      onFailed.call(exception);
                     }
                 });
         }
     }
 
-    public static void deleteImage(String path, boolean fromServer) {
-        if (path != null && !path.isEmpty()) {
-            final String fname = uriToFileName(path);
+    public static void deleteImage(String imageUrl, boolean fromServer) {
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            final String fname = uriToFileName(imageUrl);
             if (fromServer == true)
                 ImageFirebaseStorage.deleteImage(fname, new OnCompleteListener() {
                     @Override
@@ -72,7 +73,7 @@ public class ImageStorageManager {
         }
     }
 
-    public static String uriToFileName(String uri) {
+    private static String uriToFileName(String uri) {
         String s = uri.toString().split("images%2F")[1].split("alt=")[0];
         return s.substring(0, s.length() - 1);
     }

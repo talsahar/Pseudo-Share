@@ -20,12 +20,19 @@ import java.io.OutputStream;
  */
 
 public class ImageLocalStorage {
+
+    static File dir = Environment.getExternalStoragePublicDirectory(
+            Environment.DIRECTORY_PICTURES);
+
     public static Bitmap loadImage(String imageFileName){
         if(imageFileName==null||imageFileName.isEmpty())
             return null;
         Bitmap bitmap = null;
         try {
             File imageFile = new File(dir,imageFileName);
+            if(!imageFile.exists() || imageFile.isDirectory())
+                return null;
+
             InputStream inputStream = new FileInputStream(imageFile);
             bitmap = BitmapFactory.decodeStream(inputStream);
             Log.d("tag","got image from cache: " + imageFileName);
@@ -36,11 +43,9 @@ public class ImageLocalStorage {
         }
         return bitmap;
     }
-    static File dir = Environment.getExternalStoragePublicDirectory(
-            Environment.DIRECTORY_PICTURES);
+
     public static void storeImage(Bitmap imageBitmap, String imageFileName){
         try {
-
             if (!dir.exists()) {
                 dir.mkdir();
             }
@@ -61,8 +66,7 @@ public class ImageLocalStorage {
             imageFile.delete();
     }
 
-    public static boolean isExists(String filename){
-        File f = new File(dir,filename);
-        return (f.exists() && !f.isDirectory());
-    }
+
+
+
 }

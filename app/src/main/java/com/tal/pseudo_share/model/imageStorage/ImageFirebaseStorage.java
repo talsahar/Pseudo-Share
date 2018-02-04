@@ -25,11 +25,9 @@ import java.net.URL;
 
 public class ImageFirebaseStorage {
 
-
     public static void storeImage(Bitmap bitmap, String name, final OnUploadCompleteListener listener) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference().child("images").child(name);
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
@@ -85,6 +83,12 @@ public class ImageFirebaseStorage {
         });
     }
 
+    public static void getExistsDownloadUrl(String fname,OnCompleteListener<Uri> onCompleteListener){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference().child("images").child(fname);
+        storageRef.getDownloadUrl().addOnCompleteListener(onCompleteListener);
+    }
+
     public interface OnUploadCompleteListener {
         void onUploadComplete(Uri result);
 
@@ -97,5 +101,7 @@ public class ImageFirebaseStorage {
 
         void onDownloadFailed(Exception exception);
     }
+
+
 
 }

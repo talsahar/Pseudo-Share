@@ -36,13 +36,6 @@ public class Pseudo {
         return new PseudoBuilder(id);
     }
 
-    public PseudoBuilder builderFromThis() {
-        PseudoBuilder builder = new PseudoBuilder(id);
-        builder.setAuthor(author).setDate(DateConverter.toDate(date)).setName(name).setDifficulty(difficulty).setPseudoType(type).setDescription(description).setImageurl(imageUrl)
-                .setContent(content).setDeleted(isDeleted).setLastupdate(lastUpdate);
-        return builder;
-    }
-
 
     public HashMap<String, Object> toJson() {
         HashMap<String, Object> result = new HashMap<>();
@@ -62,13 +55,6 @@ public class Pseudo {
 
 
     public Pseudo() {
-    }
-
-    //compare ids
-    @Override
-    public boolean equals(Object obj) {
-        Pseudo p = (Pseudo) obj;
-        return p.getId().equals(((Pseudo) obj).getId());
     }
 
 
@@ -241,7 +227,7 @@ public class Pseudo {
         public static void sortbyDate(List<Pseudo> list){
             for(int i=0;i<list.size()-1;i++)
                 for(int j=i+1;j<list.size();j++)
-                    if(list.get(i).getLastUpdate()>list.get(j).getLastUpdate())
+                    if(list.get(i).getLastUpdate()<list.get(j).getLastUpdate())
                     {
                         Pseudo tmp=list.get(i);
                         list.set(i,list.get(j));

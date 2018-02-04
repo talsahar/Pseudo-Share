@@ -2,13 +2,10 @@ package com.tal.pseudo_share.ui.creation;
 
 
 import android.app.Activity;
-import android.app.DialogFragment;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -17,14 +14,10 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -34,19 +27,16 @@ import com.tal.pseudo_share.data.Difficulty;
 import com.tal.pseudo_share.data.Pseudo;
 import com.tal.pseudo_share.data.PseudoType;
 import com.tal.pseudo_share.ui.BaseActivity;
-import com.tal.pseudo_share.ui.main.MainActivity;
 import com.tal.pseudo_share.view.ListAlertDialog;
 import com.tal.pseudo_share.view.ListPickerEditText;
 import com.tal.pseudo_share.viewmodel.CreatePseudoViewModel;
 import com.tal.pseudo_share.viewmodel.DetailsViewModel;
-import com.tal.pseudo_share.viewmodel.StaticMutablesHolder;
+import com.tal.pseudo_share.model.StaticMutablesHolder;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Arrays;
-
-import static android.app.Activity.RESULT_OK;
 
 
 public class CreateFragmentOne extends Fragment {

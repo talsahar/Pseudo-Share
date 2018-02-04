@@ -34,7 +34,6 @@ public class DateConverter {
     }
 
     public static String onlyDate(Date date){
-        String newstring = new SimpleDateFormat("yyyy-MM-dd").format(date);
-        return newstring;
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
     }
 }

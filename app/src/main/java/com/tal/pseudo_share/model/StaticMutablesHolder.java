@@ -1,4 +1,4 @@
-package com.tal.pseudo_share.viewmodel;
+package com.tal.pseudo_share.model;
 
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;

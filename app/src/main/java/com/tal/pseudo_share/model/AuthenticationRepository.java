@@ -11,7 +11,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.tal.pseudo_share.viewmodel.StaticMutablesHolder;
 
 /**
  * Created by talsahar73 on 10/01/2018.
@@ -50,7 +49,7 @@ public class AuthenticationRepository {
                                 userMutableLiveData.setValue(task.getResult().getUser());
 
                             else
-                                StaticMutablesHolder.exceptionMutableLiveData.setValue(task.getException());
+                                onFail.onFailure(task.getException());
                             StaticMutablesHolder.progressStatus.setValue(false);
                         }
                     }).addOnFailureListener(onFail);
@@ -78,7 +77,7 @@ public class AuthenticationRepository {
                             }
                         });
                     } else
-                        StaticMutablesHolder.exceptionMutableLiveData.setValue(taskA.getException());
+                        onFail.onFailure(taskA.getException());
                     StaticMutablesHolder.progressStatus.setValue(false);
                 }
             }).addOnFailureListener(onFail);
@@ -101,9 +100,7 @@ public class AuthenticationRepository {
 
 
     public static String getCurrUsername() {
-        if (userMutableLiveData.getValue() != null)
-            return userMutableLiveData.getValue().getDisplayName();
-        return null;
+        return userMutableLiveData.getValue()!=null?userMutableLiveData.getValue().getDisplayName():null;
     }
 
 }

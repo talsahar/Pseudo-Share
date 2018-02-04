@@ -14,8 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.tal.pseudo_share.R;
-import com.tal.pseudo_share.ui.creation.CreateFragmentOne;
-import com.tal.pseudo_share.viewmodel.StaticMutablesHolder;
+import com.tal.pseudo_share.model.StaticMutablesHolder;
 
 import java.util.HashMap;
 import java.util.Map;
