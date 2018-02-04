@@ -78,6 +78,7 @@ public class CreateFragmentOne extends Fragment {
             detailsViewModel.getDrawableLivedata(editPseudo.getImageUrl()).observe(this, new Observer<Bitmap>() {
                 @Override
                 public void onChanged(@Nullable Bitmap bitmap) {
+                    if(bitmap!=null)
                     picture.setImageBitmap(bitmap);
                 }
             });

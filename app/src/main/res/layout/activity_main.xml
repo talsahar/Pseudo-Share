@@ -67,7 +67,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/add_icon" />
+        android:scaleType="center"
+        app:srcCompat="@drawable/add_icon1" />
 
 
     <include layout="@layout/myprogressbar"
