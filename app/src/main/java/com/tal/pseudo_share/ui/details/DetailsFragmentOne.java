@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.data.Pseudo;
+import com.tal.pseudo_share.ui.BaseActivity;
 import com.tal.pseudo_share.ui.creation.CreateFragmentTwo;
 import com.tal.pseudo_share.viewmodel.DetailsViewModel;
 
@@ -47,6 +48,8 @@ public class DetailsFragmentOne extends Fragment {
                             if (bitmap != null) {
                                 ImageView image = view.findViewById(R.id.pseudoImage);
                                 image.setImageBitmap(bitmap);
+                               BaseActivity activity= (BaseActivity) getActivity();
+                               activity.assignImageViewPopup(image);
                             }
                         }
                     });

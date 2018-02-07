@@ -25,9 +25,6 @@ public class MyStorage {
             RoomDB.class,
             "pseudo_share_db").fallbackToDestructiveMigration().allowMainThreadQueries().build();
 
-    public static ImageStorageManager imageStorageManager = new ImageStorageManager();
-
-    public static PseudoFirebase firebaseDb=new PseudoFirebase();
 
     public static void updateLastUpdate(long lastUpdated){
         SharedPreferences.Editor editor = MyApplication.getMyContext().getSharedPreferences("TAG", MODE_PRIVATE).edit();
@@ -38,11 +35,5 @@ public class MyStorage {
     public static long getLastUpdate(){
         return MyApplication.getMyContext().getSharedPreferences("TAG", MODE_PRIVATE).getLong("lastUpdateDate", 0);
     }
-
-    public static void clearLocalPseudoDB(){
-        for(Pseudo data:database.pseudoDao().selectAll())
-            database.pseudoDao().delete(data);
-    }
-
 
 }

@@ -32,6 +32,7 @@ dependencies {
     compile 'com.makeramen:roundedimageview:2.3.0'
     compile 'com.github.dmytrodanylyk:android-morphing-button:98a4986e56' // commit hash
     compile 'com.ms-square:expandableTextView:0.1.4'
+    compile 'com.github.chathuralakmal:AndroidImagePopup:1.2.1'
 
     //firebase
     //noinspection GradleCompatible
@@ -39,7 +40,6 @@ dependencies {
     compile 'com.google.firebase:firebase-database:11.8.0'
     compile 'com.google.firebase:firebase-storage:11.8.0'
     compile 'com.google.firebase:firebase-auth:11.8.0'
-
     //architecture
     // ViewModel and LiveData
     implementation "android.arch.lifecycle:extensions:1.0.0"

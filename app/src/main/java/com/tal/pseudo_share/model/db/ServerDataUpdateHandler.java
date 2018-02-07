@@ -3,6 +3,7 @@ package com.tal.pseudo_share.model.db;
 import android.os.AsyncTask;
 
 import com.tal.pseudo_share.data.Pseudo;
+import com.tal.pseudo_share.model.imageStorage.ImageStorageManager;
 import com.tal.pseudo_share.viewmodel.PseudoListLiveData;
 
 import java.util.HashSet;
@@ -14,12 +15,12 @@ import java.util.concurrent.Semaphore;
  * Created by User on 18/01/2018.
  */
 
-public class RecentPseudosHandler extends AsyncTask<List<Pseudo>, String, Set<Pseudo>> {
+public class ServerDataUpdateHandler extends AsyncTask<List<Pseudo>, String, Set<Pseudo>> {
 
     private final Runnable onComplete;
     Semaphore semaphore;
     PseudoListLiveData pseudoListLiveData;
-    public RecentPseudosHandler(Semaphore semaphore, PseudoListLiveData pseudoListLiveData,Runnable onComplete){
+    public ServerDataUpdateHandler(Semaphore semaphore, PseudoListLiveData pseudoListLiveData,Runnable onComplete){
         this.semaphore=semaphore;
         this.pseudoListLiveData=pseudoListLiveData;
         this.onComplete=onComplete;
@@ -69,7 +70,7 @@ public class RecentPseudosHandler extends AsyncTask<List<Pseudo>, String, Set<Ps
         super.onPostExecute(toDelete);
         if(toDelete!=null)
         for (Pseudo pseudo : toDelete) {
-            MyStorage.imageStorageManager.deleteImage(pseudo.getImageUrl(),false);
+            ImageStorageManager.deleteImage(pseudo.getImageUrl(),false);
             MyStorage.database.pseudoDao().delete(pseudo);
         }
 

@@ -4,9 +4,11 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.ui.BaseActivity;
+import com.tal.pseudo_share.ui.creation.CreatePseudoActivity;
 
 import java.util.HashMap;
 
@@ -21,7 +23,11 @@ public class DetailsActivity extends BaseActivity {
     @Override
     public void setContentView() {
         setContentView(R.layout.activity_details);
+    }
 
+    @Override
+    public int getParentId() {
+        return R.id.parent;
     }
 
     @Override
@@ -48,4 +54,5 @@ public class DetailsActivity extends BaseActivity {
         map.put(R.id.contentContainer, new DetailsFragmentOne());
         return map;
     }
+
 }

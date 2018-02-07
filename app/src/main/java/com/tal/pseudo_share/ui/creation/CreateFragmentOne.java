@@ -87,11 +87,11 @@ public class CreateFragmentOne extends Fragment {
 
         difficultyPicker.setFloatingLabelText("Choose Difficulty");
         final String[] difficulties = Arrays.toString(Difficulty.values()).replaceAll("^.|.$", "").split(", ");
-        difficultyPicker.handleDialog(new ListPickerEditText.MyPickerDialog(difficulties, "Choose a Difficulty"));
+        difficultyPicker.handleDialog(new ListPickerEditText.MyPickerDialog(difficulties, "Choose a Difficulty"),null);
 
         typePicker.setFloatingLabelText("Choose Subdomain");
         final String[] pseudoTypes = Arrays.toString(PseudoType.values()).replaceAll("^.|.$", "").split(", ");
-        typePicker.handleDialog(new ListPickerEditText.MyPickerDialog(pseudoTypes, "Choose Algorithm Subdomain"));
+        typePicker.handleDialog(new ListPickerEditText.MyPickerDialog(pseudoTypes, "Choose Algorithm Subdomain"),null);
 
         picture.setOnClickListener(new View.OnClickListener() {
             @Override

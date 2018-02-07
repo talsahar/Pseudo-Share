@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseUser;
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.ui.BaseActivity;
+import com.tal.pseudo_share.ui.creation.CreatePseudoActivity;
 import com.tal.pseudo_share.ui.main.MainActivity;
 import com.tal.pseudo_share.utilities.StoragePermission;
 import com.tal.pseudo_share.viewmodel.AuthenticationViewModel;
@@ -30,14 +31,13 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         StoragePermission.verifyStoragePermissions(this);
-
         final EditText userField = findViewById(R.id.userField);
         final EditText passField = findViewById(R.id.passField);
         final EditText nickField = findViewById(R.id.nickname);
         Button signupButton = findViewById(R.id.signupButton);
         Button loginButton = findViewById(R.id.loginButton);
+
 
         viewModel = ViewModelProviders.of(this).get(AuthenticationViewModel.class);
 
@@ -85,8 +85,13 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Override
+    public int getParentId() {
+        return R.id.parent;
+    }
+
+    @Override
     public ProgressBar loadProgressBar() {
-        return  findViewById(R.id.progressBar);
+        return findViewById(R.id.progressBar);
     }
 
     @Override
@@ -98,4 +103,6 @@ public class LoginActivity extends BaseActivity {
     public HashMap<Integer, Fragment> getInitialFragments() {
         return null;
     }
+
+
 }

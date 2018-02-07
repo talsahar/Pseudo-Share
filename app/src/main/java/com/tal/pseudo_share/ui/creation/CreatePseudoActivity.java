@@ -8,9 +8,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.data.Pseudo;
+import com.tal.pseudo_share.model.StaticMutablesHolder;
 import com.tal.pseudo_share.ui.BaseActivity;
 import com.tal.pseudo_share.viewmodel.CreatePseudoViewModel;
 
@@ -29,7 +31,6 @@ public class CreatePseudoActivity extends BaseActivity {
         createPseudoViewModel.getPseudoLiveData().observe(this, new Observer<Pseudo>() {
             @Override
             public void onChanged(@Nullable Pseudo pseudo) {
-                finish();
             }
         });
     }
@@ -50,6 +51,11 @@ public class CreatePseudoActivity extends BaseActivity {
     }
 
     @Override
+    public int getParentId() {
+        return R.id.parent;
+    }
+
+    @Override
     public ProgressBar loadProgressBar() {
         return findViewById(R.id.progressBar);
     }
@@ -65,4 +71,5 @@ return R.id.contentContainer;
         map.put(R.id.contentContainer, new CreateFragmentOne());
         return map;
     }
+
 }

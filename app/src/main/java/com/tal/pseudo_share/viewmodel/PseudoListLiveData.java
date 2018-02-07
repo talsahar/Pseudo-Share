@@ -39,6 +39,8 @@ public class PseudoListLiveData extends MutableLiveData<List<Pseudo>> {
 
     @MainThread
     public static PseudoListLiveData getInstance(String userName) {
+        if(userName==null)
+            throw new NullPointerException("null username valeu");
         if (instance == null||(instance!=null&&!instance.getUsername().equals(userName))) {
             instance = new PseudoListLiveData(userName);
         }

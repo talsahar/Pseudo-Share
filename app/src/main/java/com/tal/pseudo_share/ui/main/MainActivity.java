@@ -15,11 +15,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
-import com.tal.pseudo_share.ExternalActivity;
+import com.tal.pseudo_share.ui.external.ExternalActivity;
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.ui.BaseActivity;
 import com.tal.pseudo_share.ui.creation.CreatePseudoActivity;
+import com.tal.pseudo_share.ui.login.LoginActivity;
 import com.tal.pseudo_share.ui.main.categories.CategoriesMainFragment;
 import com.tal.pseudo_share.viewmodel.AllPseudoViewModel;
 import com.tal.pseudo_share.viewmodel.AuthenticationViewModel;
@@ -89,6 +91,11 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
     }
 
+    @Override
+    public int getParentId() {
+        return R.id.main_content;
+    }
+
 
     @Override
     public ProgressBar loadProgressBar() {
@@ -104,6 +111,7 @@ public class MainActivity extends BaseActivity {
     public HashMap<Integer, Fragment> getInitialFragments() {
         return null;
     }
+
 }
 
 class SectionsPagerAdapter extends FragmentPagerAdapter {

@@ -1,13 +1,14 @@
-package com.tal.pseudo_share;
+package com.tal.pseudo_share.ui.external;
 
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.ui.BaseActivity;
-import com.tal.pseudo_share.ui.creation.CreateFragmentOne;
+import com.tal.pseudo_share.ui.creation.CreatePseudoActivity;
 
 import java.util.HashMap;
 
@@ -28,7 +29,11 @@ public class ExternalActivity extends BaseActivity {
     @Override
     public void setContentView() {
         setContentView(R.layout.activity_external);
+    }
 
+    @Override
+    public int getParentId() {
+        return R.id.parent;
     }
 
     @Override
@@ -47,4 +52,5 @@ public class ExternalActivity extends BaseActivity {
         map.put(R.id.contentContainer, new AboutFragment());
         return map;
     }
+
 }

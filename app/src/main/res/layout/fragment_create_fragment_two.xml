@@ -44,12 +44,14 @@
             app:layout_constraintEnd_toStartOf="@+id/fontSizePicker"
             app:layout_constraintStart_toEndOf="@+id/fontColorPicker" />
 
+
+
         <com.tal.pseudo_share.view.ListPickerEditText
             android:id="@+id/fontColorPicker"
             android:layout_width="88dp"
-            android:layout_height="49dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:hint="Font Color"
             android:textColor="#ffffff"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -59,6 +61,7 @@
             android:id="@+id/fontSizePicker"
             android:layout_width="88dp"
             android:layout_height="49dp"
+            android:clickable="false"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:hint="Font Size"

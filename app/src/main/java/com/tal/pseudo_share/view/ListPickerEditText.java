@@ -19,13 +19,14 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.tal.pseudo_share.utilities.Callback;
 
 
 public class ListPickerEditText extends MaterialEditText {
 
     MyPickerDialog dialog;
     Context context;
-
+Callback<String> delegate;
     public ListPickerEditText(final Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
@@ -57,13 +58,16 @@ public class ListPickerEditText extends MaterialEditText {
 
     }
 
-    public void handleDialog(MyPickerDialog dialog) {
+    public void handleDialog(final MyPickerDialog dialog, final Callback<String> delegate) {
         this.dialog = dialog;
+        this.delegate=delegate;
         dialog.setPickerDelegate(new PickerDelegate() {
             @Override
             public void onChosen(String chosen) {
                 setText(chosen);
                 clearFocus();
+                if(delegate!=null)
+                    delegate.call(chosen);
             }
         });
     }
@@ -105,6 +109,7 @@ public class ListPickerEditText extends MaterialEditText {
             return builder.create();
         }
     }
+
 
 
 }

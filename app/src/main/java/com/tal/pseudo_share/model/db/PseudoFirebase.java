@@ -26,22 +26,11 @@ import java.util.List;
 
 public class PseudoFirebase {
 
-    Query query;
+    static Query query;
 
-    public void reset() {
-        if(query!=null)
-            query.removeEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });
-    }
 
-    public void getAllPseudosAndObserve(@Nullable Long lastUpdate, final Callback<List<Pseudo>> callback) {
+    public static void getAllPseudosAndObserve(@Nullable Long lastUpdate, final Callback<List<Pseudo>> callback) {
         query = FirebaseDatabase.getInstance().getReference("pseudos");
         query = query.orderByChild("lastUpdate").startAt(lastUpdate);
 
@@ -62,7 +51,7 @@ public class PseudoFirebase {
         });
     }
 
-    public void addPseudo(final Pseudo pseudo, final Callback<Pseudo> onComplete) {
+    public static void addPseudo(final Pseudo pseudo, final Callback<Pseudo> onComplete) {
         Log.d("TAG", "Adding pseudo to firebase name:" + pseudo.getName());
         HashMap<String, Object> map = pseudo.toJson();
         FirebaseDatabase.getInstance().getReference("pseudos").child(pseudo.id).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -73,7 +62,7 @@ public class PseudoFirebase {
         });
     }
 
-    public void deletePseudo(final Pseudo pseudo, final Callback<Pseudo> onComplete) {
+    public static void deletePseudo(final Pseudo pseudo, final Callback<Pseudo> onComplete) {
         Log.d("TAG", "Deleting pseudo from firebase name:" + pseudo.getName());
         pseudo.setIsDeleted(true);
         HashMap<String, Object> map = pseudo.toJson();
@@ -85,5 +74,18 @@ public class PseudoFirebase {
         });
     }
 
+    public static void releaseBinding(final Callback<Void> onComplete) {
+        if(query!=null)
+            query.removeEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    onComplete.call(null);
+                }
 
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    onComplete.call(null);
+                }
+            });
+    }
 }

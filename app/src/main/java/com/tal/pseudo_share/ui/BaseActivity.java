@@ -1,6 +1,9 @@
 package com.tal.pseudo_share.ui;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,11 +13,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.model.StaticMutablesHolder;
+import com.tal.pseudo_share.ui.main.KeyboardHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +37,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseActi
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView();
-
+        KeyboardHandler.setupUI(this,findViewById(getParentId()));
         Toolbar toolbar = getToolbar();
         if (toolbar != null)
             setSupportActionBar(toolbar);
@@ -57,7 +64,11 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseActi
         StaticMutablesHolder.exceptionMutableLiveData.observe(this, new Observer<Exception>() {
             @Override
             public void onChanged(@Nullable Exception e) {
-                Toast.makeText(BaseActivity.this, e.getMessage(), Toast.LENGTH_SHORT);
+                if(e!=null)
+                {
+                    Toast.makeText(BaseActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                    StaticMutablesHolder.exceptionMutableLiveData.setValue(null);
+                }
             }
         });
 
@@ -97,14 +108,52 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseActi
         finish();
     }
 
+    public void registerHideKeyboardOnClick(View view){
+        view.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+            }
+        });
+    }
+
+    public void assignImageViewPopup(ImageView image){
+
+        final ImagePopup imagePopup = new ImagePopup(this);
+        imagePopup.setWindowHeight(800); // Optional
+        imagePopup.setWindowWidth(800); // Optional
+        imagePopup.setBackgroundColor(Color.BLACK);  // Optional
+        imagePopup.setFullScreen(true); // Optional
+        imagePopup.setHideCloseIcon(true);  // Optional
+        imagePopup.setImageOnClickClose(true);  // Optional
+
+        imagePopup.initiatePopup(image.getDrawable());
+
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /** Initiate Popup view **/
+                imagePopup.viewPopup();
+
+            }
+        });
+
+    }
+
+    public void onDone(){
+        finish();
+    }
+
 
 }
 
 interface BaseActivityInterface {
     Toolbar getToolbar();//null value wont display menu, (dont forget to set title toolbar.setTitle(""));
     void setContentView();
+    int getParentId();//returns parent id for keyboard autoDismiss
     ProgressBar loadProgressBar();
     int getOnBackFragmentId();//when user clicks back button it will return which fragment container stack to pop.
     HashMap<Integer, Fragment> getInitialFragments();//return an hashmap of fragments and their container's id
-
 }

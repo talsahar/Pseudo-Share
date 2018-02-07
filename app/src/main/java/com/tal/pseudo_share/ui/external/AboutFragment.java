@@ -1,4 +1,4 @@
-package com.tal.pseudo_share;
+package com.tal.pseudo_share.ui.external;
 
 
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.tal.pseudo_share.R;
 
 
 public class AboutFragment extends Fragment {

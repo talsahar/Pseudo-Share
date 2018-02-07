@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import com.tal.pseudo_share.data.Pseudo;
 import com.tal.pseudo_share.model.AuthenticationRepository;
+import com.tal.pseudo_share.model.imageStorage.ImageStorageManager;
 import com.tal.pseudo_share.utilities.Callback;
 import com.tal.pseudo_share.viewmodel.PseudoListLiveData;
 import com.tal.pseudo_share.model.StaticMutablesHolder;
@@ -33,7 +34,12 @@ public class PseudoRepository {
 
     //called on login to prevent preview authorized user data collisions **have to be called on after authorization**.
     public static PseudoRepository initInstance(){
-        MyStorage.firebaseDb.reset();
+        PseudoFirebase.releaseBinding(new Callback<Void>() {
+            @Override
+            public void call(Void data) {
+
+            }
+        });
         Holder.instance=new PseudoRepository();
         return Holder.instance;
     }
@@ -48,9 +54,11 @@ public class PseudoRepository {
         exceptionCallback = new Callback<Exception>() {
             @Override
             public void call(Exception exception) {
-                exception.printStackTrace();
-                StaticMutablesHolder.exceptionMutableLiveData.setValue(exception);
-                StaticMutablesHolder.progressStatus.setValue(false);
+              if(exception!=null){
+                  exception.printStackTrace();
+                  StaticMutablesHolder.exceptionMutableLiveData.setValue(exception);
+                  StaticMutablesHolder.progressStatus.setValue(false);
+              }
             }
         };
         String username = AuthenticationRepository.getCurrUsername();
@@ -61,12 +69,12 @@ public class PseudoRepository {
 
     public void storePseudo(final Pseudo pseudo, Bitmap imageBitmap, final Runnable onComplete) {
         StaticMutablesHolder.progressStatus.setValue(true);
-        MyStorage.imageStorageManager.storeImage(imageBitmap, pseudo.getImageFileName(), new Callback<Uri>() {
+        ImageStorageManager.storeImage(imageBitmap, pseudo.getImageFileName(), new Callback<Uri>() {
             @Override
             public void call(Uri data) {
                 if (data != null)
                     pseudo.setImageUrl(data.toString());
-                MyStorage.firebaseDb.addPseudo(pseudo, new Callback<Pseudo>() {
+                PseudoFirebase.addPseudo(pseudo, new Callback<Pseudo>() {
                     @Override
                     public void call(Pseudo data) {
                         MyStorage.database.pseudoDao().insert(pseudo);
@@ -85,10 +93,10 @@ public class PseudoRepository {
 
         boolean hasLocked = semQuery.tryAcquire();
         if (hasLocked) {
-            MyStorage.firebaseDb.getAllPseudosAndObserve(lastUpdateDate, new Callback<List<Pseudo>>() {
+            PseudoFirebase.getAllPseudosAndObserve(lastUpdateDate, new Callback<List<Pseudo>>() {
                 @Override
                 public void call(List<Pseudo> data) {
-                    new RecentPseudosHandler(semTask, pseudoListLiveData, new Runnable() {
+                    new ServerDataUpdateHandler(semTask, pseudoListLiveData, new Runnable() {
                         @Override
                         public void run() {
                             StaticMutablesHolder.progressStatus.setValue(false);
@@ -107,7 +115,7 @@ public class PseudoRepository {
     public LiveData<Bitmap> loadPseudoDrawable(String path) {
         StaticMutablesHolder.progressStatus.setValue(true);
         final MutableLiveData<Bitmap> drawableMutableLiveData = new MutableLiveData<>();
-        MyStorage.imageStorageManager.loadImage(path, new Callback<Bitmap>() {
+        ImageStorageManager.loadImage(path, new Callback<Bitmap>() {
             @Override
             public void call(Bitmap data) {
                 drawableMutableLiveData.setValue(data);
@@ -135,12 +143,12 @@ public class PseudoRepository {
 
     public void deletePseudo(final Pseudo pseudo) {
         StaticMutablesHolder.progressStatus.setValue(true);
-        MyStorage.imageStorageManager.deleteImage(pseudo.getImageUrl(), true);
+        ImageStorageManager.deleteImage(pseudo.getImageUrl(), true);
         MyStorage.database.pseudoDao().delete(pseudo);
         pseudoListLiveData.removeIfContains(pseudo);
 
 
-        MyStorage.firebaseDb.deletePseudo(pseudo, new Callback<Pseudo>() {
+        PseudoFirebase.deletePseudo(pseudo, new Callback<Pseudo>() {
             @Override
             public void call(Pseudo data) {
                 StaticMutablesHolder.progressStatus.setValue(false);
