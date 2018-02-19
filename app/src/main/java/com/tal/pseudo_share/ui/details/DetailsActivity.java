@@ -3,6 +3,8 @@ package com.tal.pseudo_share.ui.details;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -17,13 +19,9 @@ public class DetailsActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
-    public void setContentView() {
         setContentView(R.layout.activity_details);
     }
+
 
     @Override
     public int getParentId() {
@@ -43,16 +41,38 @@ public class DetailsActivity extends BaseActivity {
         return findViewById(R.id.progressBar);
     }
 
-    @Override
-    public int getOnBackFragmentId() {
-        return R.id.contentContainer;
-    }
+
 
     @Override
     public  HashMap<Integer, Fragment> getInitialFragments() {
         HashMap<Integer,Fragment> map=new HashMap<>();
         map.put(R.id.contentContainer, new DetailsFragmentOne());
         return map;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.create_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_cancel:
+                onBackPressed();
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //it will finish activity if there is no fragment on the stack.
+        int containerId=R.id.contentContainer;
+        if(getSupportFragmentManager().findFragmentById(containerId)==null)
+            finish();
     }
 
 }

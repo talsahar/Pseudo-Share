@@ -31,6 +31,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
         StoragePermission.verifyStoragePermissions(this);
         final EditText userField = findViewById(R.id.userField);
         final EditText passField = findViewById(R.id.passField);
@@ -79,10 +80,7 @@ public class LoginActivity extends BaseActivity {
         return null;
     }
 
-    @Override
-    public void setContentView() {
-        setContentView(R.layout.activity_login);
-    }
+
 
     @Override
     public int getParentId() {
@@ -92,11 +90,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     public ProgressBar loadProgressBar() {
         return findViewById(R.id.progressBar);
-    }
-
-    @Override
-    public int getOnBackFragmentId() {
-        return 0;
     }
 
     @Override

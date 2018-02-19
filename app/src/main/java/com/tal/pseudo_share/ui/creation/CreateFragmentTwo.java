@@ -64,7 +64,7 @@ CreatePseudoViewModel viewModel;
                     viewModel.getUnreadyPseudo().setContent(code.getText().toString()).setDate(new Date());
                     viewModel.updateLiveData();
                 CreatePseudoActivity createPseudoActivity = (CreatePseudoActivity) getActivity();
-                createPseudoActivity.onDone();
+                createPseudoActivity.finish();
             }
         });
 

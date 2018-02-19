@@ -36,31 +36,11 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseActi
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView();
-        KeyboardHandler.setupUI(this,findViewById(getParentId()));
-        Toolbar toolbar = getToolbar();
-        if (toolbar != null)
-            setSupportActionBar(toolbar);
-
-        HashMap<Integer, Fragment> fragmentMap = getInitialFragments();
-        if (fragmentMap != null) {
-            for (Map.Entry<Integer, Fragment> entry : fragmentMap.entrySet()) {
-                loadFragment(entry.getKey(),entry.getValue());
-            }
-        }
+       // KeyboardHandler.setupUI(this,findViewById(getParentId()));
 
 
-        final ProgressBar progressBar = loadProgressBar();
-        if (progressBar != null)
-            StaticMutablesHolder.progressStatus.observe(this, new Observer<Boolean>() {
-                @Override
-                public void onChanged(@Nullable Boolean aBoolean) {
-                    if (aBoolean)
-                        progressBar.setVisibility(View.VISIBLE);
-                    else
-                        progressBar.setVisibility(View.INVISIBLE);
-                }
-            });
+
+
         StaticMutablesHolder.exceptionMutableLiveData.observe(this, new Observer<Exception>() {
             @Override
             public void onChanged(@Nullable Exception e) {
@@ -74,8 +54,34 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseActi
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        HashMap<Integer, Fragment> fragmentMap = getInitialFragments();
+        if (fragmentMap != null) {
+            for (Map.Entry<Integer, Fragment> entry : fragmentMap.entrySet()) {
+                loadFragment(entry.getKey(),entry.getValue());
+            }
+        }
+        Toolbar toolbar = getToolbar();
+        if (toolbar != null)
+            setSupportActionBar(toolbar);
 
-    public void loadFragment(int containerId,Fragment fragment){
+        final ProgressBar progressBar = loadProgressBar();
+        if (progressBar != null)
+            StaticMutablesHolder.progressStatus.observe(this, new Observer<Boolean>() {
+                @Override
+                public void onChanged(@Nullable Boolean aBoolean) {
+                    if (aBoolean)
+                        progressBar.setVisibility(View.VISIBLE);
+                    else
+                        progressBar.setVisibility(View.INVISIBLE);
+                }
+            });
+
+    }
+
+    public void loadFragment(int containerId, Fragment fragment){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(containerId, fragment);
         transaction.addToBackStack(null);
@@ -83,30 +89,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseActi
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.create_menu, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_cancel:
-                onBackPressed();
-                break;
-        }
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        //it will finish activity if there is no fragment on the stack.
-        int containerId=getOnBackFragmentId();
-        if(getSupportFragmentManager().findFragmentById(containerId)==null)
-        finish();
-    }
 
     public void registerHideKeyboardOnClick(View view){
         view.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -119,41 +102,14 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseActi
         });
     }
 
-    public void assignImageViewPopup(ImageView image){
 
-        final ImagePopup imagePopup = new ImagePopup(this);
-        imagePopup.setWindowHeight(800); // Optional
-        imagePopup.setWindowWidth(800); // Optional
-        imagePopup.setBackgroundColor(Color.BLACK);  // Optional
-        imagePopup.setFullScreen(true); // Optional
-        imagePopup.setHideCloseIcon(true);  // Optional
-        imagePopup.setImageOnClickClose(true);  // Optional
-
-        imagePopup.initiatePopup(image.getDrawable());
-
-        image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                /** Initiate Popup view **/
-                imagePopup.viewPopup();
-
-            }
-        });
-
-    }
-
-    public void onDone(){
-        finish();
-    }
 
 
 }
 
 interface BaseActivityInterface {
     Toolbar getToolbar();//null value wont display menu, (dont forget to set title toolbar.setTitle(""));
-    void setContentView();
     int getParentId();//returns parent id for keyboard autoDismiss
     ProgressBar loadProgressBar();
-    int getOnBackFragmentId();//when user clicks back button it will return which fragment container stack to pop.
     HashMap<Integer, Fragment> getInitialFragments();//return an hashmap of fragments and their container's id
 }

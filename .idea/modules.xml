@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Pseudo_Share.iml" filepath="$PROJECT_DIR$/Pseudo_Share.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Pseudo-Share.iml" filepath="$PROJECT_DIR$/Pseudo-Share.iml" />
+      <module fileurl="file://C:\tal\dev\android\Pseudo-Share\Pseudo_Share.iml" filepath="C:\tal\dev\android\Pseudo-Share\Pseudo_Share.iml" />
       <module fileurl="file://C:\tal\dev\android\Pseudo_ShareV1\Pseudo_Share.iml" filepath="C:\tal\dev\android\Pseudo_ShareV1\Pseudo_Share.iml" />
       <module fileurl="file://C:\Users\talsa\StudioProjects\Pseudo_Share\Pseudo_ShareV1.iml" filepath="C:\Users\talsa\StudioProjects\Pseudo_Share\Pseudo_ShareV1.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />

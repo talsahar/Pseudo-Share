@@ -48,8 +48,6 @@ public class DetailsFragmentOne extends Fragment {
                             if (bitmap != null) {
                                 ImageView image = view.findViewById(R.id.pseudoImage);
                                 image.setImageBitmap(bitmap);
-                               BaseActivity activity= (BaseActivity) getActivity();
-                               activity.assignImageViewPopup(image);
                             }
                         }
                     });

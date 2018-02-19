@@ -34,6 +34,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
        AllPseudoViewModel viewModel=ViewModelProviders.of(this).get(AllPseudoViewModel.class);
        viewModel.initRepository();
@@ -87,11 +88,6 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public void setContentView() {
-        setContentView(R.layout.activity_main);
-    }
-
-    @Override
     public int getParentId() {
         return R.id.main_content;
     }
@@ -102,10 +98,6 @@ public class MainActivity extends BaseActivity {
         return findViewById(R.id.progressBar);
     }
 
-    @Override
-    public int getOnBackFragmentId() {
-        return 0;
-    }
 
     @Override
     public HashMap<Integer, Fragment> getInitialFragments() {
