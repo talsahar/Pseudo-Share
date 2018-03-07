@@ -1,10 +1,8 @@
 package com.tal.pseudo_share.ui.details;
 
 
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,18 +13,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.data.Pseudo;
-import com.tal.pseudo_share.ui.BaseActivity;
-import com.tal.pseudo_share.ui.creation.CreateFragmentTwo;
-import com.tal.pseudo_share.viewmodel.DetailsViewModel;
+import com.tal.pseudo_share.model.imageStorage.ImageStorageManager;
+import com.tal.pseudo_share.utilities.Callback;
+import com.tal.pseudo_share.viewmodel.PseudoVM;
 
 public class DetailsFragmentOne extends Fragment {
 
-    DetailsViewModel detailsViewModel;
 
     public DetailsFragmentOne() {
     }
@@ -36,19 +34,23 @@ public class DetailsFragmentOne extends Fragment {
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_details_fragment_one, container, false);
         String id = getActivity().getIntent().getStringExtra("id");
-        detailsViewModel = ViewModelProviders.of(getActivity()).get(DetailsViewModel.class);
-        detailsViewModel.getPseudoLivedata(id).observe(this, new Observer<Pseudo>() {
-            @Override
-            public void onChanged(@Nullable Pseudo pseudo) {
-                //download image async
-                if (pseudo.getImageUrl() != null && !pseudo.getImageUrl().isEmpty())
-                    detailsViewModel.getDrawableLivedata(pseudo.getImageUrl()).observe(DetailsFragmentOne.this, new Observer<Bitmap>() {
+        PseudoVM viewModel = ViewModelProviders.of(getActivity()).get(PseudoVM.class);
+       Pseudo pseudo = viewModel.getPseudos().getPseudoById(id);
+                if(pseudo.getImageUrl()!=null)
+                    ImageStorageManager.loadImage(pseudo.getImageUrl(), new Callback<Bitmap>() {
                         @Override
-                        public void onChanged(@Nullable Bitmap bitmap) {
-                            if (bitmap != null) {
+                        public void call(Bitmap data) {
+                            ProgressBar pBar = getActivity().findViewById(R.id.progressBar);
+                            pBar.setVisibility(View.INVISIBLE);
+                            if (data != null) {
                                 ImageView image = view.findViewById(R.id.pseudoImage);
-                                image.setImageBitmap(bitmap);
+                                image.setImageBitmap(data);
                             }
+                        }
+                    }, new Callback<Exception>() {
+                        @Override
+                        public void call(Exception data) {
+
                         }
                     });
 
@@ -60,11 +62,9 @@ public class DetailsFragmentOne extends Fragment {
                 difficulty.setText(pseudo.getDifficulty().name());
                 TextView type = view.findViewById(R.id.typeText);
                 type.setText(pseudo.getType().name());
-                ExpandableTextView description = (ExpandableTextView) view
+                ExpandableTextView description =  view
                         .findViewById(R.id.expand_text_view);
                 description.setText(pseudo.getDescription());
-            }
-        });
 
         Button button = view.findViewById(R.id.nextButton);
         button.setOnClickListener(new View.OnClickListener() {

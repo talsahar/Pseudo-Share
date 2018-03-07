@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
 import com.tal.pseudo_share.utilities.StoragePermission;
 
 import java.io.File;
@@ -25,8 +26,7 @@ public class ImageLocalStorage {
             Environment.DIRECTORY_PICTURES);
 
     public static Bitmap loadImage(String imageFileName){
-        if(imageFileName==null||imageFileName.isEmpty())
-            return null;
+
         Bitmap bitmap = null;
         try {
             File imageFile = new File(dir,imageFileName);
@@ -35,7 +35,7 @@ public class ImageLocalStorage {
 
             InputStream inputStream = new FileInputStream(imageFile);
             bitmap = BitmapFactory.decodeStream(inputStream);
-            Log.d("tag","got image from cache: " + imageFileName);
+            Logger.d("tag","got image from cache: " + imageFileName);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

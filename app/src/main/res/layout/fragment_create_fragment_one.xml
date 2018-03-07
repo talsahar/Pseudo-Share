@@ -14,7 +14,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="76dp"
         android:hint="Pseudo Code Name"
-        app:layout_constraintStart_toStartOf="parent"
         app:met_baseColor="#ffffff"
         app:met_errorColor="#dd0700"
         app:met_floatingLabel="normal"

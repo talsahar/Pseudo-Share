@@ -14,7 +14,7 @@ import com.tal.pseudo_share.utilities.MyApplication;
 import static android.content.Context.MODE_PRIVATE;
 
 
-@Database(entities = {Pseudo.class}, version = 4)
+@Database(entities = {Pseudo.class}, version = 6)
 @TypeConverters({DateConverter.class})
 abstract class RoomDB extends RoomDatabase {
     public abstract PseudoDao pseudoDao();

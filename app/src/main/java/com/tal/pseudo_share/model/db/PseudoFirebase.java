@@ -54,7 +54,7 @@ public class PseudoFirebase {
     public static void addPseudo(final Pseudo pseudo, final Callback<Pseudo> onComplete) {
         Log.d("TAG", "Adding pseudo to firebase name:" + pseudo.getName());
         HashMap<String, Object> map = pseudo.toJson();
-        FirebaseDatabase.getInstance().getReference("pseudos").child(pseudo.id).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+        FirebaseDatabase.getInstance().getReference("pseudos").child(pseudo.getId()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 onComplete.call(pseudo);
@@ -62,14 +62,13 @@ public class PseudoFirebase {
         });
     }
 
-    public static void deletePseudo(final Pseudo pseudo, final Callback<Pseudo> onComplete) {
+    public static void deletePseudo(final Pseudo pseudo) {
         Log.d("TAG", "Deleting pseudo from firebase name:" + pseudo.getName());
-        pseudo.setIsDeleted(true);
+        pseudo.setDeleted(true);
         HashMap<String, Object> map = pseudo.toJson();
-        FirebaseDatabase.getInstance().getReference("pseudos").child(pseudo.id).updateChildren(map, new DatabaseReference.CompletionListener() {
+        FirebaseDatabase.getInstance().getReference("pseudos").child(pseudo.getId()).updateChildren(map, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                onComplete.call(pseudo);
             }
         });
     }

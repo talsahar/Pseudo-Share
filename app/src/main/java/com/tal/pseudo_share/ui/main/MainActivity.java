@@ -15,16 +15,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.tal.pseudo_share.ui.external.ExternalActivity;
 import com.tal.pseudo_share.R;
-import com.tal.pseudo_share.ui.BaseActivity;
 import com.tal.pseudo_share.ui.creation.CreatePseudoActivity;
-import com.tal.pseudo_share.ui.login.LoginActivity;
 import com.tal.pseudo_share.ui.main.categories.CategoriesMainFragment;
-import com.tal.pseudo_share.viewmodel.AllPseudoViewModel;
-import com.tal.pseudo_share.viewmodel.AuthenticationViewModel;
+import com.tal.pseudo_share.viewmodel.AuthenticationVM;
+import com.tal.pseudo_share.viewmodel.PseudoVM;
 
 import java.util.HashMap;
 
@@ -36,9 +33,12 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       AllPseudoViewModel viewModel=ViewModelProviders.of(this).get(AllPseudoViewModel.class);
-       viewModel.initRepository();
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("Pseudo-Share");
+        setSupportActionBar(toolbar);
 
+        PseudoVM viewModel=ViewModelProviders.of(this).get(PseudoVM.class);
+       viewModel.getPseudos();
 
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         ViewPager mViewPager = findViewById(R.id.container);
@@ -54,6 +54,12 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onModelException(Exception exception) {
+        ProgressBar pBar = findViewById(R.id.progressBar);
+        pBar.setVisibility(View.INVISIBLE);
     }
 
 
@@ -73,36 +79,13 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
                 break;
             case R.id.action_logout:
-                ViewModelProviders.of(this).get(AuthenticationViewModel.class).signout();
+                ViewModelProviders.of(this).get(AuthenticationVM.class).signout();
                 finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public Toolbar getToolbar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Pseudo-Share");
-        return toolbar;
-    }
-
-    @Override
-    public int getParentId() {
-        return R.id.main_content;
-    }
-
-
-    @Override
-    public ProgressBar loadProgressBar() {
-        return findViewById(R.id.progressBar);
-    }
-
-
-    @Override
-    public HashMap<Integer, Fragment> getInitialFragments() {
-        return null;
-    }
 
 }
 
@@ -133,6 +116,6 @@ class SectionsPagerAdapter extends FragmentPagerAdapter {
         return fragmentHashMap.size();
     }
 
-}
+    }
 
 

@@ -1,18 +1,17 @@
 package com.tal.pseudo_share.ui.external;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.tal.pseudo_share.R;
-import com.tal.pseudo_share.ui.BaseActivity;
-import com.tal.pseudo_share.ui.creation.CreatePseudoActivity;
+import com.tal.pseudo_share.ui.main.BaseActivity;
 
-import java.util.HashMap;
 
 public class ExternalActivity extends BaseActivity {
 
@@ -21,34 +20,17 @@ public class ExternalActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_external);
 
-    }
-
-    @Override
-    public Toolbar getToolbar() {
         Toolbar toolbar=findViewById(R.id.toolbar);
-            toolbar.setTitle("About");
-        return toolbar;
+        toolbar.setTitle("About");
+        setSupportActionBar(toolbar);
+//initial fragment
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.contentContainer, new AboutFragment());
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
 
-
-    @Override
-    public int getParentId() {
-        return R.id.parent;
-    }
-
-    @Override
-    public ProgressBar loadProgressBar() {
-        return findViewById(R.id.progressBar);
-    }
-
-
-    @Override
-    public HashMap<Integer, Fragment> getInitialFragments() {
-        HashMap<Integer, Fragment> map=new HashMap<>();
-        map.put(R.id.contentContainer, new AboutFragment());
-        return map;
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -70,9 +52,12 @@ public class ExternalActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         //it will finish activity if there is no fragment on the stack.
-        int containerId=R.id.contentContainer;
-        if(getSupportFragmentManager().findFragmentById(containerId)==null)
+        if(getSupportFragmentManager().findFragmentById(R.id.contentContainer)==null)
             finish();
     }
-
+    @Override
+    public void onModelException(Exception exception) {
+        ProgressBar pBar = findViewById(R.id.progressBar);
+        pBar.setVisibility(View.INVISIBLE);
+    }
 }

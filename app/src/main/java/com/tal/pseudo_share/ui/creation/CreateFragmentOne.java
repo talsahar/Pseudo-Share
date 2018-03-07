@@ -2,7 +2,6 @@ package com.tal.pseudo_share.ui.creation;
 
 
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,8 +11,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,12 +25,13 @@ import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.data.Difficulty;
 import com.tal.pseudo_share.data.Pseudo;
 import com.tal.pseudo_share.data.PseudoType;
-import com.tal.pseudo_share.ui.BaseActivity;
+import com.tal.pseudo_share.model.imageStorage.ImageStorageManager;
+import com.tal.pseudo_share.utilities.Callback;
+import com.tal.pseudo_share.utilities.ExceptionHandler;
 import com.tal.pseudo_share.view.ListAlertDialog;
 import com.tal.pseudo_share.view.ListPickerEditText;
-import com.tal.pseudo_share.viewmodel.CreatePseudoViewModel;
-import com.tal.pseudo_share.viewmodel.DetailsViewModel;
-import com.tal.pseudo_share.model.StaticMutablesHolder;
+import com.tal.pseudo_share.viewmodel.CreatePseudoVM;
+import com.tal.pseudo_share.viewmodel.PseudoVM;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,7 +44,7 @@ public class CreateFragmentOne extends Fragment {
     RoundedImageView picture;
     ListPickerEditText difficultyPicker;
     ListPickerEditText typePicker;
-    CreatePseudoViewModel viewModel;
+    CreatePseudoVM viewModel;
     EditText description;
 
     public CreateFragmentOne() {
@@ -53,7 +53,7 @@ public class CreateFragmentOne extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(getActivity()).get(CreatePseudoViewModel.class);
+        viewModel = ViewModelProviders.of(getActivity()).get(CreatePseudoVM.class);
 
     }
 
@@ -69,17 +69,22 @@ public class CreateFragmentOne extends Fragment {
 
         String id = null;//the following block will called on edition
         if ((id = getActivity().getIntent().getStringExtra("id")) != null) {
-            DetailsViewModel detailsViewModel = ViewModelProviders.of(getActivity()).get(DetailsViewModel.class);
-            Pseudo editPseudo = detailsViewModel.getPseudoLivedata(id).getValue();
+            PseudoVM detailsViewModel = ViewModelProviders.of(getActivity()).get(PseudoVM.class);
+            Pseudo editPseudo = detailsViewModel.getPseudos().getPseudoById(id);
             description.setText(editPseudo.getDescription());
             title.setText(editPseudo.getName());
             difficultyPicker.setText(editPseudo.getDifficulty().name());
             typePicker.setText(editPseudo.getType().name());
-            detailsViewModel.getDrawableLivedata(editPseudo.getImageUrl()).observe(this, new Observer<Bitmap>() {
+            ImageStorageManager.loadImage(editPseudo.getImageUrl(), new Callback<Bitmap>() {
                 @Override
-                public void onChanged(@Nullable Bitmap bitmap) {
-                    if(bitmap!=null)
-                    picture.setImageBitmap(bitmap);
+                public void call(Bitmap data) {
+                    if(data!=null)
+                        picture.setImageBitmap(data);
+                }
+            }, new Callback<Exception>() {
+                @Override
+                public void call(Exception data) {
+
                 }
             });
             viewModel.getUnreadyPseudo().setId(id);
@@ -127,35 +132,40 @@ public class CreateFragmentOne extends Fragment {
             @Override
             public void onClick(View v) {
                 if (verifyFields()) {
-                    viewModel.getUnreadyPseudo().setDescription(description.getText().toString())
-                            .setDifficulty(Difficulty.valueOf(difficultyPicker.getText().toString()))
-                            .setPseudoType(PseudoType.valueOf(typePicker.getText().toString()))
-                            .setName(title.getText().toString());
+                    Pseudo pseudo=viewModel.getUnreadyPseudo();
+                    pseudo.setDescription(description.getText().toString());
+                    pseudo.setDifficulty(Difficulty.valueOf(difficultyPicker.getText().toString()));
+                    pseudo.setType(PseudoType.valueOf(typePicker.getText().toString()));
+                    pseudo.setName(title.getText().toString());
 
-                    BaseActivity activity = (BaseActivity) getActivity();
-                    activity.loadFragment(R.id.contentContainer, new CreateFragmentTwo());
+                    FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.contentContainer, new CreateFragmentTwo());
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
                 }
-            }
+            });
 
-            private boolean verifyFields() {
-                if (title.getText().toString().isEmpty())
-                    StaticMutablesHolder.exceptionMutableLiveData.setValue(new Exception("Please enter a title."));
-                else if (difficultyPicker.getText().toString().isEmpty())
-                    StaticMutablesHolder.exceptionMutableLiveData.setValue(new Exception("Please enter difficulty."));
-                else if (typePicker.getText().toString().isEmpty())
-                    StaticMutablesHolder.exceptionMutableLiveData.setValue(new Exception("Please enter pseudo type."));
-                else if (description.getText().toString().isEmpty())
-                    StaticMutablesHolder.exceptionMutableLiveData.setValue(new Exception("Please enter description."));
-                else return true;
-                return false;
-            }
-        });
         return view;
     }
 
+            private boolean verifyFields() {
+                if (title.getText().toString().isEmpty())
+                    ExceptionHandler.set(new Exception("Please enter a title."));
+                else if (difficultyPicker.getText().toString().isEmpty())
+                    ExceptionHandler.set(new Exception("Please enter difficulty."));
+                else if (typePicker.getText().toString().isEmpty())
+                    ExceptionHandler.set(new Exception("Please enter pseudo type."));
+                else if (description.getText().toString().isEmpty())
+                    ExceptionHandler.set(new Exception("Please enter description."));
+                else return true;
+                return false;
+            }
+
+
+    //on chosen image async
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int IMAGE_GALLERY_REQUEST = 2;
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 

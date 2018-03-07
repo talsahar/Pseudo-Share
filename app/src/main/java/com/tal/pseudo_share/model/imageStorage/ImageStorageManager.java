@@ -17,9 +17,7 @@ public class ImageStorageManager {
 
 
     public static void storeImage(final Bitmap bitmap, final String name, final Callback<Uri> onComplete, final Callback<Exception> onFailed) {
-        if (bitmap == null)
-            onComplete.call(null);
-        else{
+
                 ImageFirebaseStorage.storeImage(bitmap, name, new ImageFirebaseStorage.OnUploadCompleteListener() {
                     @Override
                     public void onUploadComplete(Uri result) {
@@ -32,22 +30,19 @@ public class ImageStorageManager {
                         onFailed.call(exception);
                     }
                 });
-        }
+
     }
 
     public static void loadImage(final String path, final Callback<Bitmap> onComplete, final Callback<Exception> onFailed) {
-        if (path == null || path.isEmpty())
-            onComplete.call(null);
-        else {
-            final String fname = uriToFileName(path);
+
             Bitmap bitmap=null;
-            if((bitmap=ImageLocalStorage.loadImage(fname))!=null)
-                onComplete.call(ImageLocalStorage.loadImage(fname));
+            if((bitmap=ImageLocalStorage.loadImage(path))!=null)
+                onComplete.call(ImageLocalStorage.loadImage(path));
             else
                 ImageFirebaseStorage.loadImage(path, new ImageFirebaseStorage.OnDownloadCompleteListener() {
                     @Override
                     public void onDownloadComplete(Bitmap result) {
-                        ImageLocalStorage.storeImage(result, fname);
+                        ImageLocalStorage.storeImage(result, path);
                         onComplete.call(result);
                     }
 
@@ -56,27 +51,17 @@ public class ImageStorageManager {
                       onFailed.call(exception);
                     }
                 });
-        }
+
     }
 
-    public static void deleteImage(String imageUrl, boolean fromServer) {
-        if (imageUrl != null && !imageUrl.isEmpty()) {
-            final String fname = uriToFileName(imageUrl);
+    public static void deleteImage(final String imageUrl, boolean fromServer) {
             if (fromServer == true)
-                ImageFirebaseStorage.deleteImage(fname, new OnCompleteListener() {
+                ImageFirebaseStorage.deleteImage(imageUrl, new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {
-                        Log.d("TAG","Image "+fname+" have been deleted from firebase.");
+                        Log.d("TAG","Image "+imageUrl+" have been deleted from firebase.");
                     }
                 });
-            ImageLocalStorage.deleteImage(fname);
+            ImageLocalStorage.deleteImage(imageUrl);
         }
     }
-
-    private static String uriToFileName(String uri) {
-        String s = uri.toString().split("images%2F")[1].split("alt=")[0];
-        return s.substring(0, s.length() - 1);
-    }
-}
-
-

@@ -15,35 +15,34 @@ import java.util.UUID;
 /**
  * Created by User on 06/01/2018.
  */
-//call getUndreadyPseudo()->Pseudo set your attributes then call updateLiveDate() when you ready to create the object.
-public class CreatePseudoViewModel extends ViewModel {
+public class CreatePseudoVM extends ViewModel {
     private MutableLiveData<Pseudo> pseudoWhenReady;
-    Pseudo.PseudoBuilder builder;
+    Pseudo newPseudo;
     Bitmap imageBitmap;
 
-    public MutableLiveData<Pseudo> getPseudoLiveData() {
+    public MutableLiveData<Pseudo> getCreatedLiveData() {
         if (pseudoWhenReady == null)
             pseudoWhenReady = new MutableLiveData<>();
         return pseudoWhenReady;
     }
 
     //observe it in your activity, notifies when storing completed.
-    public Pseudo.PseudoBuilder getUnreadyPseudo() {
-        if (builder == null) {
-            builder = Pseudo.builder(UUID.randomUUID().toString());
-            builder.setAuthor(AuthenticationRepository.getUserMutableLiveData().getValue().getDisplayName());
+    public Pseudo getUnreadyPseudo() {
+        if (newPseudo == null) {
+            newPseudo = new Pseudo(UUID.randomUUID().toString());
+            newPseudo.setAuthor(AuthenticationRepository.getInstance().getCurrUsername());
         }
-        return builder;
+        return newPseudo;
     }
 
 
-    //called when you done building your pseudo. it will store it on storage.
+    //called when you done building your pseudo.
     public void updateLiveData() {
-        final Pseudo readyPseudo = builder.build();
-        PseudoRepository.getInstance().storePseudo(readyPseudo, imageBitmap, new Runnable() {
+
+        PseudoRepository.getInstance().storePseudo(newPseudo, imageBitmap, new Runnable() {
             @Override
             public void run() {
-                pseudoWhenReady.setValue(readyPseudo);
+                pseudoWhenReady.setValue(newPseudo);
             }
         });
     }

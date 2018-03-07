@@ -15,26 +15,24 @@ import android.view.ViewGroup;
 
 import com.tal.pseudo_share.R;
 import com.tal.pseudo_share.data.Pseudo;
-import com.tal.pseudo_share.viewmodel.AllPseudoViewModel;
+import com.tal.pseudo_share.viewmodel.PseudoVM;
 
 import java.util.List;
 
 
-public abstract class AbstractListFragment extends Fragment implements MyItemRecyclerViewAdapter.OnListFragmentInteractionListener,DataLoader {
-    protected AllPseudoViewModel allPseudoViewModel;
+public abstract class AbstractListFragment extends Fragment implements MyItemRecyclerViewAdapter.OnListFragmentInteractionListener {
+    protected PseudoVM pseudoVM;
     protected MyItemRecyclerViewAdapter adapter;
     protected LiveData<List<Pseudo>> data;
 
     public AbstractListFragment() {
     }
 
-    //should be implemented in derived class
-    public abstract LiveData<List<Pseudo>> loadData();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        allPseudoViewModel = ViewModelProviders.of(getActivity()).get(AllPseudoViewModel.class);
+        pseudoVM = ViewModelProviders.of(getActivity()).get(PseudoVM.class);
         data=loadData();
         data.observe(this, new Observer<List<Pseudo>>() {
             @Override
@@ -54,9 +52,7 @@ public abstract class AbstractListFragment extends Fragment implements MyItemRec
         view.setAdapter(adapter);
         return view;
     }
+   abstract LiveData<List<Pseudo>> loadData();
 
 }
 
-interface DataLoader{
-LiveData<List<Pseudo>> loadData();
-}

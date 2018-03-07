@@ -17,10 +17,10 @@ import java.util.concurrent.Semaphore;
 
 public class ServerDataUpdateHandler extends AsyncTask<List<Pseudo>, String, Set<Pseudo>> {
 
-    private final Runnable onComplete;
     Semaphore semaphore;
     PseudoListLiveData pseudoListLiveData;
-    public ServerDataUpdateHandler(Semaphore semaphore, PseudoListLiveData pseudoListLiveData,Runnable onComplete){
+    Runnable onComplete;
+    public ServerDataUpdateHandler(Semaphore semaphore, PseudoListLiveData pseudoListLiveData, Runnable onComplete){
         this.semaphore=semaphore;
         this.pseudoListLiveData=pseudoListLiveData;
         this.onComplete=onComplete;
@@ -29,7 +29,7 @@ public class ServerDataUpdateHandler extends AsyncTask<List<Pseudo>, String, Set
     private Set<Pseudo> filterDeleted(List<Pseudo> list) {
         Set<Pseudo> toDeleteList = new HashSet<>();
         for (Pseudo pseudo : list) {
-            if (pseudo.getIsDeleted()) {
+            if (pseudo.isDeleted()) {
                 for (Pseudo p : list)
                     if (p==pseudo)
                         toDeleteList.add(p);
@@ -59,7 +59,7 @@ public class ServerDataUpdateHandler extends AsyncTask<List<Pseudo>, String, Set
                         lastUpdate = pseudoLastUpdate;
                     }
                 }
-                MyStorage.updateLastUpdate(lastUpdate);
+                MyStorage.updateLastUpdate(lastUpdate+1);
             }
 
             return toDelete;
@@ -70,6 +70,7 @@ public class ServerDataUpdateHandler extends AsyncTask<List<Pseudo>, String, Set
         super.onPostExecute(toDelete);
         if(toDelete!=null)
         for (Pseudo pseudo : toDelete) {
+            if(pseudo.getImageUrl()!=null)
             ImageStorageManager.deleteImage(pseudo.getImageUrl(),false);
             MyStorage.database.pseudoDao().delete(pseudo);
         }
@@ -77,9 +78,8 @@ public class ServerDataUpdateHandler extends AsyncTask<List<Pseudo>, String, Set
         List<Pseudo> pseudoList = MyStorage.database.pseudoDao().selectAll();
         Pseudo.PseudoSorter.sortbyDate(pseudoList);
         pseudoListLiveData.setValue(pseudoList);
-        onComplete.run();
         semaphore.release();
-
+        onComplete.run();
     }
 }
 

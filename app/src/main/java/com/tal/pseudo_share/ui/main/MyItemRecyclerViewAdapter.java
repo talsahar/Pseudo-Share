@@ -77,7 +77,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             name.setText(item.getName());
             author.setText("By: "+item.getAuthor());
             type.setText(PseudoType.toString(item.getType()));
-            date.setText(DateConverter.onlyDate(new Date(item.getDate())));
+            date.setText(DateConverter.onlyDate(DateConverter.toDate(item.getDate())));
         }
     }
     public interface OnListFragmentInteractionListener {

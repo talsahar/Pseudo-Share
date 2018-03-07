@@ -1,20 +1,13 @@
 package com.tal.pseudo_share.ui.main;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.widget.EditText;
 
 import com.tal.pseudo_share.data.Pseudo;
 import com.tal.pseudo_share.ui.creation.CreatePseudoActivity;
 import com.tal.pseudo_share.ui.details.DetailsActivity;
 import com.tal.pseudo_share.view.ListAlertDialog;
-import com.tal.pseudo_share.viewmodel.CreatePseudoViewModel;
 
 import java.util.List;
 
@@ -26,7 +19,7 @@ public class MyPseudoFragment extends AbstractListFragment {
 
     @Override
     public LiveData<List<Pseudo>> loadData() {
-        return allPseudoViewModel.getMyPseudos();
+        return pseudoVM.getPseudos().getMyPseudosLiveData();
     }
 
     @Override
@@ -46,7 +39,7 @@ public class MyPseudoFragment extends AbstractListFragment {
                      intent2.putExtra("id", item.getId());
                      startActivity(intent2);
                      break;
-                 case 2:allPseudoViewModel.deletePseudo(item);
+                 case 2:pseudoVM.deletePseudo(item);
              }
             }
         }).show(getActivity().getFragmentManager(),"TAG");

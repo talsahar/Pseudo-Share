@@ -9,8 +9,8 @@ import com.tal.pseudo_share.data.Pseudo;
 import com.tal.pseudo_share.model.AuthenticationRepository;
 import com.tal.pseudo_share.model.imageStorage.ImageStorageManager;
 import com.tal.pseudo_share.utilities.Callback;
+import com.tal.pseudo_share.utilities.ExceptionHandler;
 import com.tal.pseudo_share.viewmodel.PseudoListLiveData;
-import com.tal.pseudo_share.model.StaticMutablesHolder;
 
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -21,55 +21,39 @@ import java.util.concurrent.Semaphore;
 
 public class PseudoRepository {
 
+    static PseudoRepository instance;
+
     PseudoListLiveData pseudoListLiveData;
-    Callback<Exception> exceptionCallback;
-    private Semaphore semQuery, semTask;
+    private Semaphore  semTask;
 
 
-
-
-    public static class Holder {
-        static PseudoRepository instance;
-    }
-
-    //called on login to prevent preview authorized user data collisions **have to be called on after authorization**.
-    public static PseudoRepository initInstance(){
+    public void releaseBinding(){
         PseudoFirebase.releaseBinding(new Callback<Void>() {
             @Override
             public void call(Void data) {
 
             }
         });
-        Holder.instance=new PseudoRepository();
-        return Holder.instance;
     }
 
     public static PseudoRepository getInstance() {
-        return Holder.instance;
+        if (instance==null)
+            instance=new PseudoRepository();
+        return instance;
     }
 
     private PseudoRepository() {
-        semQuery = new Semaphore(1);
         semTask = new Semaphore(1);
-        exceptionCallback = new Callback<Exception>() {
-            @Override
-            public void call(Exception exception) {
-              if(exception!=null){
-                  exception.printStackTrace();
-                  StaticMutablesHolder.exceptionMutableLiveData.setValue(exception);
-                  StaticMutablesHolder.progressStatus.setValue(false);
-              }
-            }
-        };
-        String username = AuthenticationRepository.getCurrUsername();
+
+        String username = AuthenticationRepository.getInstance().getCurrUsername();
         if (username == null)
             throw new NullPointerException("null username reference");
-        else pseudoListLiveData = PseudoListLiveData.getInstance(username);
+        else pseudoListLiveData = new PseudoListLiveData(username);
     }
 
     public void storePseudo(final Pseudo pseudo, Bitmap imageBitmap, final Runnable onComplete) {
-        StaticMutablesHolder.progressStatus.setValue(true);
-        ImageStorageManager.storeImage(imageBitmap, pseudo.getImageFileName(), new Callback<Uri>() {
+        if(imageBitmap!=null)
+        ImageStorageManager.storeImage(imageBitmap, pseudo.getId(), new Callback<Uri>() {
             @Override
             public void call(Uri data) {
                 if (data != null)
@@ -79,87 +63,67 @@ public class PseudoRepository {
                     public void call(Pseudo data) {
                         MyStorage.database.pseudoDao().insert(pseudo);
                         onComplete.run();
-                        StaticMutablesHolder.progressStatus.setValue(false);
                     }
                 });
-            }
-        }, exceptionCallback);
-    }
-
-
-    public LiveData<List<Pseudo>> getAllPseudos() {
-        StaticMutablesHolder.progressStatus.setValue(true);
-        long lastUpdateDate = MyStorage.getLastUpdate();
-
-        boolean hasLocked = semQuery.tryAcquire();
-        if (hasLocked) {
-            PseudoFirebase.getAllPseudosAndObserve(lastUpdateDate, new Callback<List<Pseudo>>() {
-                @Override
-                public void call(List<Pseudo> data) {
-                    new ServerDataUpdateHandler(semTask, pseudoListLiveData, new Runnable() {
-                        @Override
-                        public void run() {
-                            StaticMutablesHolder.progressStatus.setValue(false);
-                        }
-                    }).execute(data);
-                }
-            });
-        } else {
-            StaticMutablesHolder.exceptionMutableLiveData.setValue(new Exception("You are blocked on get all pseudos"));
-        }
-
-        return pseudoListLiveData;
-    }
-
-
-    public LiveData<Bitmap> loadPseudoDrawable(String path) {
-        StaticMutablesHolder.progressStatus.setValue(true);
-        final MutableLiveData<Bitmap> drawableMutableLiveData = new MutableLiveData<>();
-        ImageStorageManager.loadImage(path, new Callback<Bitmap>() {
-            @Override
-            public void call(Bitmap data) {
-                drawableMutableLiveData.setValue(data);
-                StaticMutablesHolder.progressStatus.setValue(false);
             }
         }, new Callback<Exception>() {
             @Override
             public void call(Exception data) {
-                exceptionCallback.call(data);
+                ExceptionHandler.set(data);
             }
         });
-        return drawableMutableLiveData;
+        else//no image
+            PseudoFirebase.addPseudo(pseudo, new Callback<Pseudo>() {
+                @Override
+                public void call(Pseudo data) {
+                    MyStorage.database.pseudoDao().insert(pseudo);
+                    onComplete.run();
+                }
+            });
     }
 
-    public LiveData<Pseudo> loadPseudoById(final String id) {
-        final MutableLiveData<Pseudo> pseudo = new MutableLiveData<>();
-        for (Pseudo p : pseudoListLiveData.getValue()) {
-            if (p.getId().equals(id)) {
-                pseudo.setValue(p);
-                return pseudo;
-            }
+
+    public PseudoListLiveData getAllPseudos() {
+        long lastUpdateDate = MyStorage.getLastUpdate();
+
+            PseudoFirebase.getAllPseudosAndObserve(lastUpdateDate, new Callback<List<Pseudo>>() {
+                @Override
+                public void call(List<Pseudo> data) {
+
+                    Runnable onComplete = new Runnable() {
+                        @Override
+                        public void run() {
+                            PseudoFirebase.releaseBinding(new Callback<Void>() {
+                                @Override
+                                public void call(Void data) {
+                                    getAllPseudos();
+                                }
+                            });
+                        }
+                    };
+
+                    new ServerDataUpdateHandler(semTask, pseudoListLiveData,onComplete).execute(data);
+                }
+            });
+
+        return pseudoListLiveData;
+    }
+
+    public Pseudo getPseudoById(final String id) {
+        for (Pseudo p : pseudoListLiveData.getAllPseudosLiveData().getValue()) {
+            if (p.getId().equals(id))
+                return p;
         }
-        return pseudo;
+        return null;
     }
 
     public void deletePseudo(final Pseudo pseudo) {
-        StaticMutablesHolder.progressStatus.setValue(true);
+        if(pseudo.getImageUrl()!=null)
         ImageStorageManager.deleteImage(pseudo.getImageUrl(), true);
         MyStorage.database.pseudoDao().delete(pseudo);
         pseudoListLiveData.removeIfContains(pseudo);
 
-
-        PseudoFirebase.deletePseudo(pseudo, new Callback<Pseudo>() {
-            @Override
-            public void call(Pseudo data) {
-                StaticMutablesHolder.progressStatus.setValue(false);
-            }
-        });
+        PseudoFirebase.deletePseudo(pseudo);
     }
-
-    public LiveData<List<Pseudo>> getMyPseudos() {
-        return pseudoListLiveData.getMyPseudosLiveData();
-    }
-
-
 
 }

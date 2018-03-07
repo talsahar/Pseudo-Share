@@ -11,6 +11,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.tal.pseudo_share.utilities.ExceptionHandler;
+
+import java.util.logging.Logger;
 
 /**
  * Created by talsahar73 on 10/01/2018.
@@ -18,29 +21,27 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class AuthenticationRepository {
 
-    private static MutableLiveData<FirebaseUser> userMutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<FirebaseUser> userMutableLiveData;
+    private static AuthenticationRepository instance;
 
-
-    static {
-        userMutableLiveData.setValue(FirebaseAuth.getInstance().getCurrentUser());
+    public static AuthenticationRepository getInstance(){
+        if(instance == null)
+            instance=new AuthenticationRepository();
+        return instance;
     }
 
-    private static OnFailureListener onFail = new OnFailureListener() {
-        @Override
-        public void onFailure(@NonNull Exception e) {
-            StaticMutablesHolder.exceptionMutableLiveData.setValue(e);
-            StaticMutablesHolder.progressStatus.setValue(false);
-        }
-    };
+    private AuthenticationRepository(){
+         userMutableLiveData = new MutableLiveData<>();
+         userMutableLiveData.setValue(FirebaseAuth.getInstance().getCurrentUser());
+    }
 
 
-    public static void login(String email, String password) {
+    public void login(String email, String password) {
         if (email.isEmpty())
-            StaticMutablesHolder.exceptionMutableLiveData.setValue(new Exception("email field is empty"));
+            ExceptionHandler.set(new Exception("email field is empty"));
         else if (password.isEmpty())
-            StaticMutablesHolder.exceptionMutableLiveData.setValue(new Exception("password field is empty"));
+            ExceptionHandler.set(new Exception("password field is empty"));
         else {
-            StaticMutablesHolder.progressStatus.setValue(true);
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
@@ -49,22 +50,26 @@ public class AuthenticationRepository {
                                 userMutableLiveData.setValue(task.getResult().getUser());
 
                             else
-                                onFail.onFailure(task.getException());
-                            StaticMutablesHolder.progressStatus.setValue(false);
+                                ExceptionHandler.set(task.getException());
                         }
-                    }).addOnFailureListener(onFail);
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    ExceptionHandler.set(e);
+
+                }
+            });
         }
     }
 
-    public static void signup(final String email, String password, final String nickname) {
+    public void signup(final String email, String password, final String nickname) {
         if (email.isEmpty())
-            StaticMutablesHolder.exceptionMutableLiveData.setValue(new Exception("email field is empty"));
+            ExceptionHandler.set(new Exception("email field is empty"));
         else if (password.isEmpty())
-            StaticMutablesHolder.exceptionMutableLiveData.setValue(new Exception("password field is empty"));
+            ExceptionHandler.set(new Exception("password field is empty"));
         else if (nickname.isEmpty())
-            StaticMutablesHolder.exceptionMutableLiveData.setValue(new Exception("nickname field is empty"));
+            ExceptionHandler.set(new Exception("nickname field is empty"));
         else {
-            StaticMutablesHolder.progressStatus.setValue(true);
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull final Task<AuthResult> taskA) {
@@ -77,29 +82,34 @@ public class AuthenticationRepository {
                             }
                         });
                     } else
-                        onFail.onFailure(taskA.getException());
-                    StaticMutablesHolder.progressStatus.setValue(false);
+                        ExceptionHandler.set(taskA.getException());
                 }
-            }).addOnFailureListener(onFail);
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    ExceptionHandler.set(e);
+
+                }
+            });
         }
     }
 
-    private static void updateNickname(FirebaseUser user, String nickname, OnCompleteListener<Void> onCompleteListener) {
+    private void updateNickname(FirebaseUser user, String nickname, OnCompleteListener<Void> onCompleteListener) {
         UserProfileChangeRequest update = new UserProfileChangeRequest.Builder().setDisplayName(nickname).build();
-        user.updateProfile(update).addOnCompleteListener(onCompleteListener).addOnFailureListener(onFail);
+        user.updateProfile(update).addOnCompleteListener(onCompleteListener);
     }
 
-    public static void logout() {
+    public void logout() {
         FirebaseAuth.getInstance().signOut();
         userMutableLiveData.setValue(null);
     }
 
-    public static LiveData<FirebaseUser> getUserMutableLiveData() {
+    public LiveData<FirebaseUser> getUserMutableLiveData() {
         return userMutableLiveData;
     }
 
 
-    public static String getCurrUsername() {
+    public String getCurrUsername() {
         return userMutableLiveData.getValue()!=null?userMutableLiveData.getValue().getDisplayName():null;
     }
 

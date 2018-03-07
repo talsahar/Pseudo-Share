@@ -29,7 +29,8 @@
         </activity>
         <activity android:name=".ui.creation.CreatePseudoActivity" />
         <activity android:name=".ui.details.DetailsActivity" />
-        <activity android:name=".ui.external.ExternalActivity"></activity>
+        <activity android:name=".ui.external.ExternalActivity" />
+        <activity android:name=".ui.main.BaseActivity"></activity>
     </application>
 
 </manifest>

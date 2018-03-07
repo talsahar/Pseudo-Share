@@ -18,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Logger;
 
 /**
  * Created by User on 21/12/2017.
@@ -83,11 +84,6 @@ public class ImageFirebaseStorage {
         });
     }
 
-    public static void getExistsDownloadUrl(String fname,OnCompleteListener<Uri> onCompleteListener){
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference().child("images").child(fname);
-        storageRef.getDownloadUrl().addOnCompleteListener(onCompleteListener);
-    }
 
     public interface OnUploadCompleteListener {
         void onUploadComplete(Uri result);

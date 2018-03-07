@@ -2,11 +2,7 @@ package com.tal.pseudo_share.viewmodel;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.support.annotation.MainThread;
-import android.util.Half;
-
 import com.tal.pseudo_share.data.Pseudo;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,54 +10,48 @@ import java.util.List;
  * Created by User on 18/01/2018.
  */
 
-public class PseudoListLiveData extends MutableLiveData<List<Pseudo>> {
-    private static PseudoListLiveData instance;
+public class PseudoListLiveData {
     private String userName;
-    private MutableLiveData<List<Pseudo>> myPseudosLiveData;
+    private MutableLiveData<List<Pseudo>> myPseudos;
+    private MutableLiveData<List<Pseudo>> allPseudos;
 
-    private PseudoListLiveData(String userName){
+    public PseudoListLiveData(String userName){
         this.userName=userName;
-        myPseudosLiveData=new MutableLiveData<>();
-        myPseudosLiveData.setValue(new LinkedList<Pseudo>());
-        setValue(new LinkedList<Pseudo>());
-
+        myPseudos=new MutableLiveData<>();
+        allPseudos=new MutableLiveData<>();
+        myPseudos.setValue(new LinkedList<Pseudo>());
+        allPseudos.setValue(new LinkedList<Pseudo>());
     }
 
-    @Override
     public void setValue(List<Pseudo> value) {
-        super.setValue(value);
-        List<Pseudo> myPseudos=new LinkedList<>();
+        allPseudos.setValue(value);
+        List<Pseudo> myPseudosNewList=new LinkedList<>();
         for(Pseudo p:value)
             if(p.getAuthor().equals(userName))
-                myPseudos.add(p);
-        myPseudosLiveData.setValue(myPseudos);
+                myPseudosNewList.add(p);
+        myPseudos.setValue(myPseudosNewList);
     }
-
-    @MainThread
-    public static PseudoListLiveData getInstance(String userName) {
-        if(userName==null)
-            throw new NullPointerException("null username valeu");
-        if (instance == null||(instance!=null&&!instance.getUsername().equals(userName))) {
-            instance = new PseudoListLiveData(userName);
-        }
-        return instance;
-    }
-
-
 
     public LiveData<List<Pseudo>> getMyPseudosLiveData() {
-        return myPseudosLiveData;
+        return myPseudos;
+    }
+
+    public LiveData<List<Pseudo>> getAllPseudosLiveData() {
+        return allPseudos;
+    }
+
+    public Pseudo getPseudoById(String id){
+        for (Pseudo pseudo:allPseudos.getValue())
+            if(pseudo.getId().equals(id))
+                return pseudo;
+        return null;
     }
 
     public void removeIfContains(Pseudo pseudo) {
-            myPseudosLiveData.getValue().remove(pseudo);
-            getValue().remove(pseudo);
-            myPseudosLiveData.setValue(myPseudosLiveData.getValue());
-            setValue(getValue());
-
+        myPseudos.getValue().remove(pseudo);
+        allPseudos.getValue().remove(pseudo);
+        myPseudos.setValue(myPseudos.getValue());
+        allPseudos.setValue(allPseudos.getValue());
     }
 
-    public String getUsername() {
-        return userName;
-    }
 }

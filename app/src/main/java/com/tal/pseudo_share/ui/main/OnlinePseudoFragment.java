@@ -21,7 +21,7 @@ public class OnlinePseudoFragment extends AbstractListFragment {
 
     @Override
     public LiveData<List<Pseudo>> loadData() {
-        return allPseudoViewModel.getAllPseudos();
+        return pseudoVM.getPseudos().getAllPseudosLiveData();
     }
 
     @Override

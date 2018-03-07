@@ -12,25 +12,25 @@ import com.tal.pseudo_share.model.db.PseudoRepository;
  * Created by talsahar73 on 10/01/2018.
  */
 
-    public class AuthenticationViewModel extends ViewModel {
+    public class AuthenticationVM extends ViewModel {
     LiveData<FirebaseUser> userLiveData;
 
 
     public void signin(String email, String password) {
-    AuthenticationRepository.login(email,password);
+    AuthenticationRepository.getInstance().login(email,password);
     }
 
     public void signup(String email, String password,String nickname) {
-        AuthenticationRepository.signup(email,password,nickname);
+        AuthenticationRepository.getInstance().signup(email,password,nickname);
     }
 
     public void signout(){
-        AuthenticationRepository.logout();
+        AuthenticationRepository.getInstance().logout();
     }
 
     public LiveData<FirebaseUser> getUserLiveData() {
         if(userLiveData==null)
-            userLiveData=AuthenticationRepository.getUserMutableLiveData();
+            userLiveData=AuthenticationRepository.getInstance().getUserMutableLiveData();
         return userLiveData;
     }
 
